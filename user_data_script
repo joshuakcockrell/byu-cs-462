@@ -21,7 +21,7 @@ sudo git clone https://github.com/joshuakcockrell/byu-cs-462.git
 echo ''
 echo '---------------------'
 echo 'Download node'
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/xtuple/nvm/master/install.sh | sudo bash
 . ~/.nvm/nvm.sh
 nvm install node
 node -v
@@ -30,7 +30,7 @@ node -v
 echo ''
 echo '---------------------'
 echo 'Route port 80 to 8000'
-sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
 
 # NPM install
 echo ''
