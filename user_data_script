@@ -1,4 +1,8 @@
 #!/bin/bash
+echo ''
+echo '---------------------'
+echo 'whoami'
+whoami
 
 # Jump to starting dir
 echo ''
@@ -17,7 +21,7 @@ sudo git clone https://github.com/joshuakcockrell/byu-cs-462.git
 echo ''
 echo '---------------------'
 echo 'Download node'
-sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
 sudo . ~/.nvm/nvm.sh
 nvm install node
 node -v
