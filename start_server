@@ -1,0 +1,11 @@
+#!/bin/bash
+# Python version
+# cd /home/admin/app
+# sudo python -m SimpleHTTPServer 80 > /dev/null 2>&1 & disown
+
+# # See if running on port 8000
+# sudo lsof -i tcp:8000
+
+cd /home/ec2-user/byu-cs-462
+node app.js &
+
