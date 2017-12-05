@@ -10,15 +10,15 @@ sudo git clone https://github.com/joshuakcockrell/byu-cs-462.git
 # Download node
 sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
 . ~/.nvm/nvm.sh
-sudo nvm install node
-sudo node -v
+nvm install node
+node -v
 
 # Route port 80 to 8000
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
 
 # NPM install
 cd byu-cs-462
-sudo npm install
+npm install
 
 # Start server
 ./start_server
