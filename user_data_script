@@ -1,25 +1,43 @@
 #!/bin/bash
 
 # Jump to starting dir
+echo ''
+echo '---------------------'
+echo 'Jump to starting dir'
 cd /home/ec2-user
 
 # Clone the repo
+echo ''
+echo '---------------------'
+echo 'Clone the repo'
 sudo yum -y install git
 sudo git clone https://github.com/joshuakcockrell/byu-cs-462.git
 
 # Download node
+echo ''
+echo '---------------------'
+echo 'Download node'
 sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
-. ~/.nvm/nvm.sh
+sudo . ~/.nvm/nvm.sh
 nvm install node
 node -v
 
 # Route port 80 to 8000
+echo ''
+echo '---------------------'
+echo 'Route port 80 to 8000'
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
 
 # NPM install
+echo ''
+echo '---------------------'
+echo 'NPM install'
 cd byu-cs-462
 npm install
 
 # Start server
+echo ''
+echo '---------------------'
+echo 'Start server'
 ./start_server
 
