@@ -7,5 +7,6 @@
 # sudo lsof -i tcp:8000
 
 cd /home/ec2-user/byu-cs-462
-nohup node app.js &
+nohup node app.js 2>&1 &
+echo done
 
