@@ -22,13 +22,6 @@ echo '---------------------'
 echo 'Clone the repo'
 yum -y install git
 git clone https://github.com/joshuakcockrell/byu-cs-462.git
-
-sudo chown -R ec2-user /home/ec2-user/byu-cs-462
-
-# Run Rest as not root
-echo ''
-echo '---------------------'
-echo 'Run Script as not root'
 cd byu-cs-462
 
 # Download node
@@ -44,14 +37,14 @@ echo '---------------------'
 echo 'NPM install'
 npm install
 
+# Grant permissions for standard user
+sudo chmod -R 777 /home/ec2-user/byu-cs-462/output.log
+
 # Start server
 echo ''
 echo '---------------------'
 echo 'Start server'
 ./start_server
 
-
-
-#su ec2-user ./user_data_script
 
 
