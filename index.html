@@ -7,8 +7,8 @@
 </head> 
 
 <body>         
-	<h1>Josh Cockrell Server</h1>         
-	<p>AMI ID: ami-917ea4e9</p>
+	<h1>Joshua Cockrell Server</h1>   
+	<p>AMI ID: ami-6dbc1915</p>
 
 	<h2>User Data Script</h2>
 
@@ -38,9 +38,6 @@ echo '---------------------'
 echo 'Clone the repo'
 yum -y install git
 git clone https://github.com/joshuakcockrell/byu-cs-462.git
-
-# Grant permissions for standard user
-sudo chown -R ec2-user /home/ec2-user/byu-cs-462
 cd byu-cs-462
 
 # Download node
@@ -56,11 +53,17 @@ echo '---------------------'
 echo 'NPM install'
 npm install
 
+# Grant permissions for standard user
+sudo chmod -R 777 /home/ec2-user/byu-cs-462/output.log
+
 # Start server
 echo ''
 echo '---------------------'
 echo 'Start server'
 ./start_server
+
+
+
 
 
 
