@@ -5,8 +5,10 @@ const bodyParser = require('body-parser');
 const app = express();
 const path = require('path');
 
+console.log('starting at:');
+console.log(__dirname);
 // Override console.log to write to output.log file
-const log_file = fs.createWriteStream('output.log', {flags : 'a'});
+const log_file = fs.createWriteStream(__dirname + '/output.log', {flags : 'a'});
 console.log = function(d) { //
   log_file.write(util.format(d) + '\n');
 };
