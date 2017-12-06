@@ -4,24 +4,3 @@ echo '---------------------'
 echo 'whoami'
 whoami
 
-# Download node
-echo ''
-echo '---------------------'
-echo 'Download node'
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
-. ~/.nvm/nvm.sh
-nvm install node
-node -v
-
-# NPM install
-echo ''
-echo '---------------------'
-echo 'NPM install'
-npm install
-
-# Start server
-echo ''
-echo '---------------------'
-echo 'Start server'
-./start_server
-
