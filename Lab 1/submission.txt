@@ -1,0 +1,7 @@
+Your instance should have a basic web server running, serving a web page with your name, AMI ID, and a copy of your User Data script.
+Complete the assignment by typing your instance ID and any URL extension needed to view your webpage in the Notes area, then click Submit. Please include any notes necessary for the TA to view your page.
+
+Instance ID: i-09d33947724b94296
+URL: http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/
+
+Example image:
