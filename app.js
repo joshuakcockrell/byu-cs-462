@@ -33,6 +33,23 @@ app.post('/test', function (req, res) {
   res.json({query: req.query, body: req.body, headers: req.headers});
 });
 
+app.get('/redirect', function (req, res) {
+  console.log('redirect');
+
+  if (req.query.site === 'site1') {
+  	res.redirect('https://www.google.com/');
+  }
+  else if (req.query.site === 'site2') {
+  	res.redirect('http://www.cnn.com/');
+  }
+  else if (req.query.site === 'site3') {
+  	res.redirect('https://twitter.com/');
+  }
+  else {
+  	res.json({message: 'not a valid site'});
+  }
+});
+
 var server = app.listen(8000, function() {
   console.log('╔══════════════════════════╗');
   console.log('║ Server Started Port 8000 ║');
