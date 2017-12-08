@@ -25,7 +25,7 @@ app.get('/', function (req, res) {
 
 app.get('/test', function (req, res) {
   console.log('GET');
-  res.json({query: req.query, body: req.body});
+  res.json({query: req.query, body: req.body, headers: req.headers});
 });
 
 app.post('/test', function (req, res) {
