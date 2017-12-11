@@ -100,7 +100,7 @@ app.get('/users', (req, res) => {
   console.log(req.cookies.user);
   if (req.cookies.user !== undefined) {
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
-    text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>";
+    text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect1'>Connect Foursquare</a></h1>";
     text += "<h2>Foursquare Code: "+req.cookies.user.foursquareCode+"</h2>"
     text += "<h1><a href='/logout'>Log out</a></h1>";
   }
@@ -145,22 +145,31 @@ app.get('/drop-db', (req, res) => {
   return res.redirect('/users');
 });
 
-app.get('/fredirect', (req, res) => {
-  console.log('--fredirect--');
-  // console.dir(req.body);
-  // console.dir(req.headers);
-  // console.dir(req.params);
-  // console.dir(req.params.code);
-  // console.dir(req.query.code);
-  // console.dir(req);
+app.get('/fredirect1', (req, res) => {
+  console.log('--fredirect 1--');
+  console.dir(req.body);
+  console.dir(req.headers);
+  console.dir(req.params);
+  console.dir(req.query);
 
-  let user = db.users.find(user => user.id == req.cookies.user.id);
-  if (user === undefined) { return res.json({message: 'user not found'}); }
+  var options = {
+    uri: "https://foursquare.com/oauth2/access_token?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&client_secret=USS0L4SRHHHOKBEZXS1IWC04OPBPNUIJZQUGRQ51P45EPWJJ&grant_type=authorization_code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/users&code=" + req.query.code;,
+    method: 'GET'
+  };
 
-  user.foursquareCode = req.query.code;
-  saveDB();
-  res.cookie('user', user, { httpOnly : false });
-  return res.redirect('/users');
+  request(options, (err, response, body) => {
+    if (!error && response.statusCode == 200) {
+      console.log(body) // Print the shortened url.
+
+      let user = db.users.find(user => user.id == req.cookies.user.id);
+      if (user === undefined) { return res.json({message: 'user not found'}); }
+
+      user.foursquareCode = req.body.access_token;
+      saveDB();
+      res.cookie('user', user, { httpOnly : false });
+      return res.redirect('/users');
+    }
+  });
 });
 
 app.get('/accept', (req, res) => {
@@ -198,25 +207,6 @@ var server = app.listen(8000, function() {
   console.log('║ Server Started Port 8000 ║');
   console.log('╚══════════════════════════╝');
 });
-
-
-var options = {
-  uri: 'https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect',
-  method: 'POST',
-  json: {
-    "hi": "nope"
-  }
-};
-
-request(options, (error, response, body) => {
-  if (!error && response.statusCode == 200) {
-    // console.log(body) // Print the shortened url.
-  }
-});
-
-
-
-
 
 
 
