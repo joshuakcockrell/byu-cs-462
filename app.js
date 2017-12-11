@@ -17,8 +17,6 @@ console.log = function(d) { //
   process.stdout.write(d + '\n');
 };
 
-let db = null;
-
 let saveDB = () => {
   json = JSON.stringify(db); //convert it back to json
   fs.writeFile('db.json', json, (err) => {
@@ -39,7 +37,7 @@ let loadDB = (cb) => {
   return JSON.parse(data);
 }
 
-db = loadDB();
+let db = loadDB();
 console.dir(db);
 
 app.use(express.static('public'));
