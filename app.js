@@ -143,6 +143,7 @@ app.get('/fredirect', (req, res) => {
   console.log('--fredirect--');
   console.dir(req.body);
   console.dir(req.headers);
+  console.dir(req.params);
   console.dir(req.params.code);
 
   let user = db.users.find(user => user.id == req.cookies.user);
