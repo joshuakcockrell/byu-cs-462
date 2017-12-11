@@ -147,17 +147,17 @@ app.get('/drop-db', (req, res) => {
 
 app.get('/fredirect', (req, res) => {
   console.log('--fredirect--');
-  console.dir(req.body);
-  console.dir(req.headers);
-  console.dir(req.params);
-  console.dir(req.params.code);
-  console.dir(req.query.code);
+  // console.dir(req.body);
+  // console.dir(req.headers);
+  // console.dir(req.params);
+  // console.dir(req.params.code);
+  // console.dir(req.query.code);
   // console.dir(req);
 
   let user = db.users.find(user => user.id == req.cookies.user.id);
   if (user === undefined) { return res.json({message: 'user not found'}); }
 
-  user.foursquareCode = req.params.code;
+  user.foursquareCode = req.query.code;
   saveDB();
   res.cookie('user', user, { httpOnly : false });
   return res.redirect('/users');
