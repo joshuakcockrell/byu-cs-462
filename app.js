@@ -157,6 +157,8 @@ app.get('/fredirect1', (req, res) => {
     method: 'GET'
   };
 
+  console.log('request to: ' + options.uri);
+
   request(options, (err, response, body) => {
     if (!err && response.statusCode == 200) {
       console.log(body) // Print the shortened url.
@@ -168,6 +170,10 @@ app.get('/fredirect1', (req, res) => {
       saveDB();
       res.cookie('user', user, { httpOnly : false });
       return res.redirect('/users');
+    }
+    else {
+      console.dir(err);
+      console.log(response.statusCode);
     }
   });
 });
