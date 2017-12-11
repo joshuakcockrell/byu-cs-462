@@ -158,7 +158,7 @@ app.get('/fredirect1', (req, res) => {
   };
 
   request(options, (err, response, body) => {
-    if (!error && response.statusCode == 200) {
+    if (!err && response.statusCode == 200) {
       console.log(body) // Print the shortened url.
 
       let user = db.users.find(user => user.id == req.cookies.user.id);
