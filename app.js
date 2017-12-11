@@ -12,10 +12,14 @@ console.log(__dirname);
 
 // Override console.log to also write to output.log file
 const log_file = fs.createWriteStream(__dirname + '/output.log', {flags : 'a'});
-console.log = function(d) { //
+console.log = (d) => { //
   log_file.write(util.format(d) + '\n');
   process.stdout.write(d + '\n');
 };
+
+console.dir = (d) => {
+  console.log(JSON.stringify(d));
+});
 
 let saveDB = () => {
   json = JSON.stringify(db); //convert it back to json
