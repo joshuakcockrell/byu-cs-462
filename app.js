@@ -145,10 +145,10 @@ app.get('/fredirect', (req, res) => {
   console.dir(req.headers);
   console.dir(req.params);
   console.dir(req.params.code);
-  console.dir(req.query);
+  console.dir(req.query.code);
   // console.dir(req);
 
-  let user = db.users.find(user => user.id == req.cookies.user);
+  let user = db.users.find(user => user.id == req.cookies.user.id);
   if (user === undefined) { return res.json({message: 'user not found'}); }
 
   user.foursquareCode = req.params.code;
