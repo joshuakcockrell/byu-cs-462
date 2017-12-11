@@ -153,7 +153,7 @@ app.get('/fredirect1', (req, res) => {
   console.dir(req.query);
 
   var options = {
-    uri: "https://foursquare.com/oauth2/access_token?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&client_secret=USS0L4SRHHHOKBEZXS1IWC04OPBPNUIJZQUGRQ51P45EPWJJ&grant_type=authorization_code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/users&code=" + req.query.code;,
+    uri: "https://foursquare.com/oauth2/access_token?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&client_secret=USS0L4SRHHHOKBEZXS1IWC04OPBPNUIJZQUGRQ51P45EPWJJ&grant_type=authorization_code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/users&code=" + req.query.code,
     method: 'GET'
   };
 
