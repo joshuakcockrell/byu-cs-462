@@ -62,23 +62,22 @@ app.post('/user', (req, res) => {
   return res.redirect('/users');
 });
 
+// Login
 app.get('/user/:id', (req, res) => {
   console.dir(req.params);
-  db.users.forEach(user => {
-    if (user.id == req.params.id){
+  let theUser = db.users.find(user => user.id == req.params.id);
+  if (theUser === undefined) {
+    return res.json({message: 'user not found'});
+  }
+  let curDate = new Date();
+  let curDateStr = curDate.toString();
+  console.log('login at: ' + curDateStr);
 
-      let curDate = new Date();
-      let curDateStr = curDate.toString();
-      console.log('login at: ' + curDateStr);
+  user.lastLogin = curDateStr;
+  saveDB();
 
-      user.lastLogin = curDateStr;
-      saveDB();
-
-      res.cookie('user', {id: user.id, name: user.name}, { httpOnly : false });
-      return res.redirect('/users');
-    }
-  });
-  return res.json({message: 'user not found'});
+  res.cookie('user', user, { httpOnly : false });
+  return res.redirect('/users');
 });
 
 app.get('/logout', (req, res) => {
@@ -95,7 +94,8 @@ app.get('/users', (req, res) => {
   console.log(req.cookies.user);
   if (req.cookies.user !== undefined) {
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
-    text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>"
+    text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>";
+    text += "<h2>Foursquare Code: "+req.cookies.user.foursquareCode+"</h2>"
     text += "<h1><a href='/logout'>Log out</a></h1>";
   }
 
@@ -143,7 +143,15 @@ app.get('/fredirect', (req, res) => {
   console.log('--fredirect--');
   console.dir(req.body);
   console.dir(req.headers);
-  res.send('hi im /fredirect');
+  console.dir(req.params.code);
+
+  let user = db.users.find(user => user.id == req.cookies.user);
+  if (user === undefined) { return res.json({message: 'user not found'}); }
+
+  user.foursquareCode = req.params.code;
+  saveDB();
+  res.cookie('user', user, { httpOnly : false });
+  return res.redirect('/users');
 });
 
 app.get('/accept', (req, res) => {
