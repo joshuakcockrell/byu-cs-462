@@ -136,6 +136,7 @@ app.get('/drop-db', (req, res) => {
 });
 
 app.get('/fredirect', (req, res) => {
+  console.log('--fredirect--');
   console.dir(req.body);
   console.dir(req.headers);
   res.send('hi im /fredirect');
@@ -188,7 +189,7 @@ var options = {
 
 request(options, (error, response, body) => {
   if (!error && response.statusCode == 200) {
-    console.log(body) // Print the shortened url.
+    // console.log(body) // Print the shortened url.
   }
 });
 
