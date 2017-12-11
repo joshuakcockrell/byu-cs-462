@@ -65,8 +65,8 @@ app.post('/user', (req, res) => {
 // Login
 app.get('/user/:id', (req, res) => {
   console.dir(req.params);
-  let theUser = db.users.find(user => user.id == req.params.id);
-  if (theUser === undefined) {
+  let user = db.users.find(user => user.id == req.params.id);
+  if (user === undefined) {
     return res.json({message: 'user not found'});
   }
   let curDate = new Date();
