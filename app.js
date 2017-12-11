@@ -37,6 +37,12 @@ let loadDB = (cb) => {
   }
 
   let data = fs.readFileSync('db.json');
+
+  if (data.length === 0) {
+    console.log('Empty db loaded..');
+    return {users: []}
+  }
+
   console.log('Existing db loaded..');
   return JSON.parse(data);
 }
