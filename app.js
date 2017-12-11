@@ -18,7 +18,7 @@ console.log = (d) => { //
 };
 
 console.dir = (d) => {
-  console.log(JSON.stringify(d));
+  console.log(JSON.stringify(d, null, 2));
 }
 
 let saveDB = () => {
@@ -145,6 +145,7 @@ app.get('/fredirect', (req, res) => {
   console.dir(req.headers);
   console.dir(req.params);
   console.dir(req.params.code);
+  console.dir(req);
 
   let user = db.users.find(user => user.id == req.cookies.user);
   if (user === undefined) { return res.json({message: 'user not found'}); }
