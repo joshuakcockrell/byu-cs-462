@@ -19,7 +19,7 @@ console.log = (d) => { //
 
 console.dir = (d) => {
   console.log(JSON.stringify(d));
-});
+}
 
 let saveDB = () => {
   json = JSON.stringify(db); //convert it back to json
