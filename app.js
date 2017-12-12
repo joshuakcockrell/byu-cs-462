@@ -68,12 +68,48 @@ app.post('/user', (req, res) => {
   return res.redirect('/users');
 });
 
+// View user
+app.get('/view/:id', (req, res) => {
+  let user = db.users.find(user => user.id == req.params.id);
+  if (user === undefined) { return res.json({message: 'user not found'}); }
+
+  let text = '';
+
+  if (user.name)
+
+  text += '<h1>User: '+user.name+'</h1>';
+  text += '<img src="'+ user.photo.prefix + '100x100' + user.photo.suffix +'"/>';
+  text += '<h2>'+ user.firstName+' '+user.lastName +'</h2>';
+  text += '<h2>'+ user.gender +'</h2>';
+
+  // If logged in as this user
+  if (''+user.id === ''+req.cookies.user) {
+    if (req.cookies.user.checkins.count > 0) {
+      text += '<h2>Checkins</h2>';
+      let checkins = req.cookies.user.checkins.items;
+      checkins.forEach(i => {
+        text += '<h4>'+ i.venue.name+', '+i.venue.city+'</h4>';
+      });
+    }
+
+    text += "<h1><a href='/logout'>Log out</a></h1>";
+    text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>";
+
+  } else {
+    if (user.checkins.count > 0) {
+      text += '<h2>Last Checkin</h2>';
+      let checkins = req.cookies.user.checkins.items;
+      text += '<h4>'+ checkins[0].venue.name+', '+checkins[0].venue.city+'</h4>';        
+      });
+    }
+  }
+}
+
 // Login
 app.get('/user/:id', (req, res) => {
   let user = db.users.find(user => user.id == req.params.id);
-  if (user === undefined) {
-    return res.json({message: 'user not found'});
-  }
+  if (user === undefined) { return res.json({message: 'user not found'}); }
+  
   let curDate = new Date();
   let curDateStr = curDate.toString();
   console.log('login at: ' + curDateStr);
@@ -102,19 +138,16 @@ app.get('/users', (req, res) => {
   let text = '';
 
   if (req.cookies.user !== undefined) {
-    console.log('Render User..');
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
     text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>";
 
     if (req.cookies.user.foursquareUser !== undefined) {
-      console.log('Render Foursquare User..');
       user = req.cookies.user.foursquareUser;
       text += '<img src="'+ user.photo.prefix + '100x100' + user.photo.suffix +'"/>';
       text += '<h2>'+ user.firstName+' '+user.lastName +'</h2>';
       text += '<h2>'+ user.gender +'</h2>';
 
       if (req.cookies.user.checkins.count > 0) {
-        console.log('Render Foursquare User Checkins..');
         text += '<h2>Checkins</h2>';
         let checkins = req.cookies.user.checkins.items;
         checkins.forEach(i => {
@@ -210,6 +243,7 @@ app.get('/fredirect', (req, res) => {
           }
         }
         
+
 
         request("https://api.foursquare.com/v2/users/self/checkins?v=20171201&oauth_token="+user.foursquareCode, (err, response, bodyCheckins) => {
           console.log('BODY CHECKINS');
