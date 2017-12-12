@@ -147,20 +147,20 @@ app.get('/users', (req, res) => {
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
     // text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>";
 
-    if (req.cookies.user.foursquareUser !== undefined) {
-      user = req.cookies.user.foursquareUser;
-      text += '<img src="'+ user.photo.prefix + '100x100' + user.photo.suffix +'"/>';
-      text += '<h2>'+ user.firstName+' '+user.lastName +'</h2>';
-      text += '<h2>'+ user.gender +'</h2>';
+    // if (req.cookies.user.foursquareUser !== undefined) {
+    //   user = req.cookies.user.foursquareUser;
+    //   text += '<img src="'+ user.photo.prefix + '100x100' + user.photo.suffix +'"/>';
+    //   text += '<h2>'+ user.firstName+' '+user.lastName +'</h2>';
+    //   text += '<h2>'+ user.gender +'</h2>';
 
-      if (req.cookies.user.checkins.count > 0) {
-        text += '<h2>Checkins</h2>';
-        let checkins = req.cookies.user.checkins.items;
-        checkins.forEach(i => {
-          text += '<h4>'+ i.venue.name+', '+i.venue.city+'</h4>';
-        });
-      }
-    }
+    //   if (req.cookies.user.checkins.count > 0) {
+    //     text += '<h2>Checkins</h2>';
+    //     let checkins = req.cookies.user.checkins.items;
+    //     checkins.forEach(i => {
+    //       text += '<h4>'+ i.venue.name+', '+i.venue.city+'</h4>';
+    //     });
+    //   }
+    // }
 
     text += "<h1><a href='/logout'>Log out</a></h1>";
   }
@@ -272,7 +272,7 @@ app.get('/fredirect', (req, res) => {
           saveDB();
 
           res.cookie('user', clone(newUser));
-          return res.redirect('/users');
+          return res.redirect('/view/'+newUser.id);
         });
       });
     }
