@@ -163,12 +163,12 @@ app.get('/users', (req, res) => {
   text += `
 <h1>Users</h1>
 <table style="border-collapse: collapse">
-  <tr><th>Name</th><th>Last Login</th><th>Login</th><th>Last Checkin</th></tr>
+  <tr><th>Name</th><th>Last Login</th><th>Login</th><th>Last Checkin</th><th>Login</th><th>Profile</th></tr>
 `;
 
   // Add users list
   db.users.forEach(user => {
-    text += '<tr><td>' + user.name + '</td><td>' + user.lastLogin + '</td><td><a href="/user/' + user.id + '">Login</a></td>';
+    text += '<tr><td>' + user.name + '</td><td>' + user.lastLogin + '</td><td><a href="/user/' + user.id + '">Login</a></td><td><a href="/view/' + user.id + '">Profile</a></td>';
     if (user.checkins !== undefined && user.checkins.items !== undefined && user.checkins.items.length > 0) {
       text += '<td>'+user.checkins.items[0].venue.name+', '+user.checkins.items[0].venue.city+ '</td>';
     }
