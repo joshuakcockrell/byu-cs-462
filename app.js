@@ -163,7 +163,7 @@ app.get('/users', (req, res) => {
   text += `
 <h1>Users</h1>
 <table style="border-collapse: collapse">
-  <tr><th>Name</th><th>Last Login</th><th>Login</th><th>Last Checkin</th><th>Login</th><th>Profile</th></tr>
+  <tr><th>Name</th><th>Last Login</th><th>Login</th><th>Profile</th><th>Last Checkin</th></tr>
 `;
 
   // Add users list
