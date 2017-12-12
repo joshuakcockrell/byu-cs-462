@@ -70,7 +70,6 @@ app.post('/user', (req, res) => {
 
 // Login
 app.get('/user/:id', (req, res) => {
-  console.dir(req.params);
   let user = db.users.find(user => user.id == req.params.id);
   if (user === undefined) {
     return res.json({message: 'user not found'});
@@ -95,7 +94,6 @@ app.get('/users', (req, res) => {
 
   // Wipe cookie if user is gone
   console.log('/users');
-  // console.dir(db.users);
   if (db.users.length === 0 || req.cookies.user === undefined || db.users.find(user => user.id == req.cookies.user.id) === undefined) {
     console.log('Clear users..');
     res.clearCookie('user');
@@ -107,8 +105,6 @@ app.get('/users', (req, res) => {
     console.log('Render User..');
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
     text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>";
-
-    console.dir(req.cookies);
 
     if (req.cookies.user.foursquareUser !== undefined) {
       console.log('Render Foursquare User..');
@@ -140,7 +136,6 @@ app.get('/users', (req, res) => {
   db.users.forEach(user => {
     text += '<tr><td>' + user.name + '</td><td>' + user.lastLogin + '</td><td><a href="/user/' + user.id + '">Login</a></td>';
     if (user.checkins !== undefined && user.checkins.items !== undefined && user.checkins.items.length > 0) {
-      console.dir(user.checkins);
       text += '<td>'+user.checkins.items[0].venue.name+', '+user.checkins.items[0].venue.city+ '</td>';
     }
     text += '</tr>';
@@ -180,8 +175,6 @@ app.get('/fredirect', (req, res) => {
 
   request("https://foursquare.com/oauth2/access_token?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&client_secret=USS0L4SRHHHOKBEZXS1IWC04OPBPNUIJZQUGRQ51P45EPWJJ&grant_type=authorization_code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/users&code=" + req.query.code, (err, response, body) => {
     if (!err && response.statusCode == 200) {
-      console.dir(body);
-      console.dir(body); // Print the shortened url.
 
       let dbUser = db.users.find(user => user.id == req.cookies.user.id);
       let user = clone(dbUser);
@@ -220,7 +213,6 @@ app.get('/fredirect', (req, res) => {
         request("https://api.foursquare.com/v2/users/self/checkins?v=20171201&oauth_token="+user.foursquareCode, (err, response, bodyCheckins) => {
           console.log('BODY CHECKINS');
           let bodyCheckinsParsed = JSON.parse(bodyCheckins);
-          console.dir(bodyCheckinsParsed);
           let parsedCheckins = bodyCheckinsParsed.response.checkins;
 
           parsedCheckins.items.forEach(i => {
@@ -233,18 +225,16 @@ app.get('/fredirect', (req, res) => {
           });
 
           // Remove that user from arr
-          console.log('FILTER THESE USERS');
-          console.log('FILTER THESE USERS');
-          console.log('FILTER THESE USERS');
           db.users = db.users.filter(u => !(u.id.toString() === ''+userId));
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 
 >>>>>>> 30d72ce... work
+=======
+>>>>>>> e7f4f02... k
           db.users.push(clone(newUser));
 
-          console.log('SAVING USER..');
-          console.dir(db.users);
           saveDB();
 
           res.cookie('user', clone(newUser));
@@ -260,8 +250,6 @@ app.get('/fredirect', (req, res) => {
 });
 
 app.get('/accept', (req, res) => {
-
-  console.dir(req.headers.accept);
 
   if (req.headers.accept === 'application/vnd.byu.cs462.v1+json') {
     return res.json({"version": "v1" });
