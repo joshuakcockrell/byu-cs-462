@@ -21,13 +21,13 @@ console.dir = (d) => {
   console.log(JSON.stringify(d, null, 2));
 }
 
+let clone = (a) => {
+   return JSON.parse(JSON.stringify(a));
+}
+
 let saveDB = () => {
   json = JSON.stringify(db); //convert it back to json
-  fs.writeFile('db.json', json, (err) => {
-    if (err) {
-      console.log(err);
-    }
-  });
+  fs.writeFileSync('db.json', json);
 }
 
 let loadDB = (cb) => {
@@ -82,7 +82,7 @@ app.get('/user/:id', (req, res) => {
   user.lastLogin = curDateStr;
   saveDB();
 
-  res.cookie('user', user, { httpOnly : false });
+  res.cookie('user', user);
   return res.redirect('/users');
 });
 
@@ -93,28 +93,58 @@ app.get('/logout', (req, res) => {
 
 app.get('/users', (req, res) => {
 
-  console.log('cookieeee');
+  // Wipe cookie if user is gone
+  console.log('/users');
+  // console.dir(db.users);
+  if (db.users.length === 0 || req.cookies.user === undefined || db.users.find(user => user.id == req.cookies.user.id) === undefined) {
+    console.log('Clear users..');
+    res.clearCookie('user');
+  }
 
   let text = '';
 
-  console.dir(req.cookies.user);
   if (req.cookies.user !== undefined) {
+    console.log('Render User..');
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
     text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>";
-    text += "<h2>Foursquare Code: "+req.cookies.user.foursquareCode+"</h2>"
+
+    console.dir(req.cookies);
+
+    if (req.cookies.user.foursquareUser !== undefined) {
+      console.log('Render Foursquare User..');
+      user = req.cookies.user.foursquareUser;
+      text += '<img src="'+ user.photo.prefix + '100x100' + user.photo.suffix +'"/>';
+      text += '<h2>'+ user.firstName+' '+user.lastName +'</h2>';
+      text += '<h2>'+ user.gender +'</h2>';
+
+      if (req.cookies.user.checkins.count > 0) {
+        console.log('Render Foursquare User Checkins..');
+        text += '<h2>Checkins</h2>';
+        let checkins = req.cookies.user.checkins.items;
+        checkins.forEach(i => {
+          text += '<h4>'+ i.venue.name+', '+i.venue.city+'</h4>';
+        });
+      }
+    }
+
     text += "<h1><a href='/logout'>Log out</a></h1>";
   }
 
   text += `
 <h1>Users</h1>
-<table>
-  <tr><th>Name</th><th>Last Login</th><th>Login</th></tr>
+<table style="border-collapse: collapse">
+  <tr><th>Name</th><th>Last Login</th><th>Login</th><th>Last Checkin</th></tr>
 `;
 
   // Add users list
   db.users.forEach(user => {
-    let link = '<tr><td>' + user.name + '</td><td>' + user.lastLogin + '</td><td><a href="/user/' + user.id + '">Login</a></td></tr>';
-    text += link;
+
+    text += '<tr><td>' + user.name + '</td><td>' + user.lastLogin + '</td><td><a href="/user/' + user.id + '">Login</a></td>';
+    if (user.checkins !== undefined && user.checkins.items !== undefined && user.checkins.items.length > 0) {
+      console.dir(user.checkins);
+      text += '<td>'+user.checkins.items[0].venue.name+', '+user.checkins.items[0].venue.city+ '</td>';
+    }
+    text += '</tr>';
   });
   text += '</table>';
 
@@ -142,36 +172,98 @@ app.post('/test', (req, res) => {
 app.get('/drop-db', (req, res) => {
   db = {users: []};
   saveDB();
+  res.clearCookie('user');
   return res.redirect('/users');
 });
 
 app.get('/fredirect', (req, res) => {
-  console.log('--fredirect --');
-  console.dir(req.body);
-  console.dir(req.headers);
-  console.dir(req.params);
-  console.dir(req.query);
+  console.log('--fredirect--');
 
-  var options = {
-    uri: "https://foursquare.com/oauth2/access_token?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&client_secret=USS0L4SRHHHOKBEZXS1IWC04OPBPNUIJZQUGRQ51P45EPWJJ&grant_type=authorization_code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/users&code=" + req.query.code,
-    method: 'GET'
-  };
-
-  console.log('request to: ' + options.uri);
-
-  request(options, (err, response, body) => {
+  request("https://foursquare.com/oauth2/access_token?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&client_secret=USS0L4SRHHHOKBEZXS1IWC04OPBPNUIJZQUGRQ51P45EPWJJ&grant_type=authorization_code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/users&code=" + req.query.code, (err, response, body) => {
     if (!err && response.statusCode == 200) {
       console.dir(body);
       console.dir(body); // Print the shortened url.
 
-      let user = db.users.find(user => user.id == req.cookies.user.id);
+      let dbUser = db.users.find(user => user.id == req.cookies.user.id);
+      let user = clone(dbUser);
+      let userId = user.id;
       if (user === undefined) { return res.json({message: 'user not found'}); }
 
+      body = JSON.parse(body);
       user.foursquareCode = body.access_token;
-      saveDB();
-      res.cookie('user', user, { httpOnly : false });
 
-      return res.redirect('/users');
+      ///////////////////
+      // GET user info //
+      request("https://api.foursquare.com/v2/users/self?v=20171201&oauth_token="+user.foursquareCode, (err, response, body) => {        
+        console.log('BODY USER');
+        let bodyParsed = JSON.parse(body);
+        let parsedUser = bodyParsed.response.user;
+
+        let newUser = {
+          id: user.id, 
+          name: user.name, 
+          lastLogin: user.lastLogin,
+          foursquareUser: {
+            id: parsedUser.id,
+            firstName: parsedUser.firstName,
+            lastName: parsedUser.lastName,
+            gender: parsedUser.gender,
+            photo: parsedUser.photo,
+            homeCity: parsedUser.homeCity,
+            bio: parsedUser.bio
+          },
+          checkins: {
+            count: parsedUser.checkins.count,
+            items: []
+          }
+        }
+
+        request("https://api.foursquare.com/v2/users/self/checkins?v=20171201&oauth_token="+user.foursquareCode, (err, response, bodyCheckins) => {
+          console.log('BODY CHECKINS');
+          let bodyCheckinsParsed = JSON.parse(bodyCheckins);
+          console.dir(bodyCheckinsParsed);
+          let parsedCheckins = bodyCheckinsParsed.response.checkins;
+
+          parsedCheckins.items.forEach(i => {
+            newUser.checkins.items.push({
+              venue: {
+                name: i.venue.name,
+                city: i.venue.location.city
+              }
+            });
+          });
+
+          // Remove that user from arr
+          console.log('FILTER THESE USERS');
+          console.log('FILTER THESE USERS');
+          console.log('FILTER THESE USERS');
+          db.users = db.users.filter(u => !(u.id.toString() === ''+userId));
+
+          db.users.push(clone(newUser));
+
+          console.log('SAVING USER..');
+          console.dir(db.users);
+          saveDB();
+
+          res.cookie('user', clone(newUser));
+          return res.redirect('/users');
+        });
+<<<<<<< HEAD
+=======
+
+        console.log('----DB----');
+        console.dir(db.users);
+        console.log('----NEW USER----');
+        console.dir(newUser);
+
+
+        console.log('SAVING USER..');
+        saveDB();
+
+        res.cookie('user', clone(newUser));
+        return res.redirect('/users');
+>>>>>>> 8a1ef4a... work
+      });
     }
     else {
       console.dir(err);
