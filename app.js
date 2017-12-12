@@ -209,6 +209,7 @@ app.get('/fredirect', (req, res) => {
             items: []
           }
         }
+        
 
         request("https://api.foursquare.com/v2/users/self/checkins?v=20171201&oauth_token="+user.foursquareCode, (err, response, bodyCheckins) => {
           console.log('BODY CHECKINS');
@@ -226,13 +227,6 @@ app.get('/fredirect', (req, res) => {
 
           // Remove that user from arr
           db.users = db.users.filter(u => !(u.id.toString() === ''+userId));
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> 30d72ce... work
-=======
->>>>>>> e7f4f02... k
           db.users.push(clone(newUser));
 
           saveDB();
