@@ -230,7 +230,6 @@ app.get('/fredirect', (req, res) => {
                 city: i.venue.location.city
               }
             });
-<<<<<<< HEAD
           });
 
           // Remove that user from arr
@@ -248,48 +247,6 @@ app.get('/fredirect', (req, res) => {
           res.cookie('user', clone(newUser));
           return res.redirect('/users');
         });
-<<<<<<< HEAD
-=======
-=======
-          });
-
-<<<<<<< HEAD
-          db.users.forEach(u => {
-            if (u.id == userId) {
-              u = newUser;
-            }
-          });
-
-          // console.log('----DB----');
-          // console.dir(db.users);
-          // console.log('----NEW USER----');
-          // console.dir(newUser);
->>>>>>> 715aa1b... work
-=======
->>>>>>> b8c3756... work
-
-          // // Update the user
-          // db.users.forEach(u => {
-          //   if (u.id == userId) {
-          //     u = newUser;
-          //   }
-          // });
-
-          console.log('SAVING USER..');
-          dbUser = newUser;
-          console.dir(db.users);
-          saveDB();
-
-          res.cookie('user', clone(newUser));
-          return res.redirect('/users');
-
-<<<<<<< HEAD
-        res.cookie('user', clone(newUser));
-        return res.redirect('/users');
->>>>>>> 8a1ef4a... work
-=======
-        });
->>>>>>> 715aa1b... work
       });
     }
     else {
