@@ -100,7 +100,7 @@ app.get('/users', (req, res) => {
   console.log(req.cookies.user);
   if (req.cookies.user !== undefined) {
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
-    text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect1'>Connect Foursquare</a></h1>";
+    text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>";
     text += "<h2>Foursquare Code: "+req.cookies.user.foursquareCode+"</h2>"
     text += "<h1><a href='/logout'>Log out</a></h1>";
   }
@@ -145,8 +145,8 @@ app.get('/drop-db', (req, res) => {
   return res.redirect('/users');
 });
 
-app.get('/fredirect1', (req, res) => {
-  console.log('--fredirect 1--');
+app.get('/fredirect', (req, res) => {
+  console.log('--fredirect --');
   console.dir(req.body);
   console.dir(req.headers);
   console.dir(req.params);
@@ -169,6 +169,7 @@ app.get('/fredirect1', (req, res) => {
       user.foursquareCode = req.body.access_token;
       saveDB();
       res.cookie('user', user, { httpOnly : false });
+
       return res.redirect('/users');
     }
     else {
