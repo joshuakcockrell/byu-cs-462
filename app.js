@@ -98,7 +98,7 @@ app.get('/view/:id', (req, res) => {
     text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>";
 
   } else {
-    if (user.checkins.count > 0) {
+    if (user.checkins !== undefined && user.checkins.count > 0) {
       text += '<h2>Last Checkin</h2>';
       let checkins = user.checkins.items;
       text += '<h4>'+ checkins[0].venue.name+', '+checkins[0].venue.city+'</h4>';        
