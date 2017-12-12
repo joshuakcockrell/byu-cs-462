@@ -75,18 +75,20 @@ app.get('/view/:id', (req, res) => {
 
   let text = '';
 
-  if (user.name)
 
   text += '<h1>User: '+user.name+'</h1>';
-  text += '<img src="'+ user.photo.prefix + '100x100' + user.photo.suffix +'"/>';
-  text += '<h2>'+ user.firstName+' '+user.lastName +'</h2>';
-  text += '<h2>'+ user.gender +'</h2>';
+
+  if (user.foursquareUser !== undefined) {
+    text += '<img src="'+ user.foursquareUser.photo.prefix + '100x100' + user.foursquareUser.photo.suffix +'"/>';
+    text += '<h2>'+ user.foursquareUser.firstName+' '+user.foursquareUser.lastName +'</h2>';
+    text += '<h2>'+ user.foursquareUser.gender +'</h2>';
+  }
 
   // If logged in as this user
   if (''+user.id === ''+req.cookies.user) {
     if (req.cookies.user.checkins.count > 0) {
-      text += '<h2>Checkins</h2>';
       let checkins = req.cookies.user.checkins.items;
+      text += '<h2>Checkins</h2>';
       checkins.forEach(i => {
         text += '<h4>'+ i.venue.name+', '+i.venue.city+'</h4>';
       });
@@ -98,7 +100,7 @@ app.get('/view/:id', (req, res) => {
   } else {
     if (user.checkins.count > 0) {
       text += '<h2>Last Checkin</h2>';
-      let checkins = req.cookies.user.checkins.items;
+      let checkins = user.checkins.items;
       text += '<h4>'+ checkins[0].venue.name+', '+checkins[0].venue.city+'</h4>';        
     }
   }
