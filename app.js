@@ -85,10 +85,7 @@ app.get('/view/:id', (req, res) => {
   }
 
   // If logged in as this user
-  console.log('--------');
-  console.log(''+user.id);
-  console.dir(''+req.cookies.user.id);
-  if (''+user.id === ''+req.cookies.user.id) {
+  if (req.cookies.user !== undefined && (''+user.id === ''+req.cookies.user.id)) {
     if (user.checkins !== undefined && user.checkins.count > 0) {
       let checkins = user.checkins.items;
       text += '<h2>Checkins</h2>';
