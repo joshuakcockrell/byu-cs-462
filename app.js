@@ -97,7 +97,7 @@ app.get('/users', (req, res) => {
 
   let text = '';
 
-  console.log(req.cookies.user);
+  console.dir(req.cookies.user);
   if (req.cookies.user !== undefined) {
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
     text += "<h1><a href='https://foursquare.com/oauth2/authenticate?client_id=5PHHDV0NIRJYRKG5KPI0GVJWEXUIMMNZTMLURR3U32OE1QJO&response_type=code&redirect_uri=http://ec2-52-43-158-0.us-west-2.compute.amazonaws.com/fredirect'>Connect Foursquare</a></h1>";
@@ -161,12 +161,13 @@ app.get('/fredirect', (req, res) => {
 
   request(options, (err, response, body) => {
     if (!err && response.statusCode == 200) {
-      console.log(body) // Print the shortened url.
+      console.dir(body);
+      console.dir(body); // Print the shortened url.
 
       let user = db.users.find(user => user.id == req.cookies.user.id);
       if (user === undefined) { return res.json({message: 'user not found'}); }
 
-      user.foursquareCode = req.body.access_token;
+      user.foursquareCode = body.access_token;
       saveDB();
       res.cookie('user', user, { httpOnly : false });
 
