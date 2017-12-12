@@ -138,7 +138,6 @@ app.get('/users', (req, res) => {
 
   // Add users list
   db.users.forEach(user => {
-
     text += '<tr><td>' + user.name + '</td><td>' + user.lastLogin + '</td><td><a href="/user/' + user.id + '">Login</a></td>';
     if (user.checkins !== undefined && user.checkins.items !== undefined && user.checkins.items.length > 0) {
       console.dir(user.checkins);
@@ -254,6 +253,7 @@ app.get('/fredirect', (req, res) => {
 =======
           });
 
+<<<<<<< HEAD
           db.users.forEach(u => {
             if (u.id == userId) {
               u = newUser;
@@ -265,9 +265,19 @@ app.get('/fredirect', (req, res) => {
           // console.log('----NEW USER----');
           // console.dir(newUser);
 >>>>>>> 715aa1b... work
+=======
+>>>>>>> b8c3756... work
 
+          // // Update the user
+          // db.users.forEach(u => {
+          //   if (u.id == userId) {
+          //     u = newUser;
+          //   }
+          // });
 
           console.log('SAVING USER..');
+          dbUser = newUser;
+          console.dir(db.users);
           saveDB();
 
           res.cookie('user', clone(newUser));
