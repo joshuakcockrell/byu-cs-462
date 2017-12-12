@@ -237,6 +237,10 @@ app.get('/fredirect', (req, res) => {
           console.log('FILTER THESE USERS');
           console.log('FILTER THESE USERS');
           db.users = db.users.filter(u => !(u.id.toString() === ''+userId));
+<<<<<<< HEAD
+=======
+
+>>>>>>> 30d72ce... work
           db.users.push(clone(newUser));
 
           console.log('SAVING USER..');
