@@ -38,6 +38,7 @@ echo 'NPM install'
 npm install
 
 # Grant permissions for standard user
+sudo touch output.log
 sudo chmod -R 777 /home/ec2-user/byu-cs-462/output.log
 sudo touch db.json
 sudo chmod -R 777 /home/ec2-user/byu-cs-462/db.json
