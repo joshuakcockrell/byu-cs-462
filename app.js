@@ -419,6 +419,7 @@ var fs = require('fs');
 var app = express();
 
 app.get('/', (req, res) => {
+  console.log('hit');
   res.send('Suh');
 });
 
@@ -430,6 +431,7 @@ var options = {
 http.createServer(app).listen(8888, () => {
   console.log('http on 8888..');
 });
+
 https.createServer(options, app).listen(8000, () => {
   console.log('https on 8000..');
 });
