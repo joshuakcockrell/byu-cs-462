@@ -333,7 +333,7 @@ greenlock.create({
   agreeTos: true,
   approveDomains: [ 'gobyu.ga' ],
   app: app
-}).listen(8000, 8000);
+}).listen(8888, 8000);
 
 // // Redirect http to https
 // var http = express.createServer();
