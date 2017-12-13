@@ -333,6 +333,7 @@ greenlock.create({
   agreeTos: true,
   approveDomains: [ 'gobyu.ga' ],
   app: require('express')().use('/', function (req, res) {
+      console.log('run run plz');
       res.end('Hello, World!');
     })
 }).listen(8888, 8000);
