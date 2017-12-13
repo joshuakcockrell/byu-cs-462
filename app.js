@@ -326,12 +326,19 @@ app.get('/redirect', (req, res) => {
 });
 
 
-// HTTP Redirect
+// HTTP
 http.createServer((req, res) => {
-  res.redirect('https://' + req.headers.host + req.url);
+  res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
+  res.end();
 }).listen(8080, () => {
   console.log('http redirect on 8080..');
 });
+
+// // Redirect HTTP to HTTPS
+// http.get('*', function(req, res) {  
+//     res.redirect('https://' + req.headers.host + req.url);
+// })
+// http.listen(8080);
 
 var sslOptions = {
   cert: fs.readFileSync('./sslcert/fullchain.pem'),
