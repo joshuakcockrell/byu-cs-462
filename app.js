@@ -92,6 +92,7 @@ app.get('/view/:id', (req, res) => {
 
 
   text += '<h1>User: '+user.name+'</h1>';
+  text += '<a href="/users">Back to users</a>';
 
   if (user.foursquareUser !== undefined) {
     text += '<img src="'+ user.foursquareUser.photo.prefix + '100x100' + user.foursquareUser.photo.suffix +'"/>';
