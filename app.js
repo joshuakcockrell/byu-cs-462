@@ -426,8 +426,8 @@ app.get('/', (req, res) => {
 });
 
 var options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/gobyu.ga/fullchain.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/gobyu.ga/privkey.pem')
+  key: fs.readFileSync('./sslcert/fullchain.pem'),
+  cert: fs.readFileSync('./sslcert/privkey.pem')
 };
 
 console.log('options..');
