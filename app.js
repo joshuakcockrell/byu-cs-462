@@ -412,15 +412,27 @@
 
 
 
-const express = require('express')
-const app = express()
+var express = require('express');
+var https = require('https');
+var http = require('http');
+var fs = require('fs');
+var app = express();
 
-app.get('/', (req, res) => res.send('Hello World!'))
+app.get('/', (req, res) => {
+  res.send('Suh');
+});
 
-app.listen(8000, () => console.log('Example app listening on port 8000!'))
+var options = {
+  // key: fs.readFileSync('/path/to/key.pem'),
+  // cert: fs.readFileSync('/path/to/cert.pem')
+};
 
-
-
+http.createServer(app).listen(8888, () => {
+  console.log('http on 8888..');
+});
+https.createServer(options, app).listen(8000, () => {
+  console.log('https on 8000..');
+});
 
 
 
