@@ -430,6 +430,9 @@ var options = {
   cert: fs.readFileSync('/etc/letsencrypt/live/gobyu.ga/privkey.pem')
 };
 
+console.log('options..');
+console.dir(options);
+
 http.createServer(app).listen(8080, () => {
   console.log('http on 8080..');
 });
