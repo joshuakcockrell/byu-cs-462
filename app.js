@@ -332,7 +332,9 @@ greenlock.create({
   email: 'joshuakcockrell@gmail.com',
   agreeTos: true,
   approveDomains: [ 'gobyu.ga' ],
-  app: app
+  app: require('express')().use('/', function (req, res) {
+      res.end('Hello, World!');
+    })
 }).listen(8888, 8000);
 
 // // Redirect http to https
