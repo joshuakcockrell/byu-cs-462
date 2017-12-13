@@ -1,59 +1,59 @@
 'use strict';
 
-const fs = require('fs');
-const util = require('util');
-// const express = require('express');
-const bodyParser = require('body-parser');
-// const app = express();
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const request = require('request');
-const greenlock = require('greenlock-express');
+// const fs = require('fs');
+// const util = require('util');
+// // const express = require('express');
+// const bodyParser = require('body-parser');
+// // const app = express();
+// const path = require('path');
+// const cookieParser = require('cookie-parser');
+// const request = require('request');
+// const greenlock = require('greenlock-express');
 
 
 
-console.log('starting at:');
-console.log(__dirname);
+// console.log('starting at:');
+// console.log(__dirname);
 
-// Override console.log to also write to output.log file
-const log_file = fs.createWriteStream(__dirname + '/output.log', {flags : 'a'});
-console.log = (d) => { //
-  log_file.write(util.format(d) + '\n');
-  process.stdout.write(d + '\n');
-};
+// // Override console.log to also write to output.log file
+// const log_file = fs.createWriteStream(__dirname + '/output.log', {flags : 'a'});
+// console.log = (d) => { //
+//   log_file.write(util.format(d) + '\n');
+//   process.stdout.write(d + '\n');
+// };
 
-console.dir = (d) => {
-  console.log(JSON.stringify(d, null, 2));
-}
+// console.dir = (d) => {
+//   console.log(JSON.stringify(d, null, 2));
+// }
 
-let clone = (a) => {
-   return JSON.parse(JSON.stringify(a));
-}
+// let clone = (a) => {
+//    return JSON.parse(JSON.stringify(a));
+// }
 
-let saveDB = () => {
-  json = JSON.stringify(db); //convert it back to json
-  fs.writeFileSync('db.json', json);
-}
+// let saveDB = () => {
+//   json = JSON.stringify(db); //convert it back to json
+//   fs.writeFileSync('db.json', json);
+// }
 
-let loadDB = (cb) => {
-  if (!fs.existsSync('db.json')) {
-    console.log('Empty db loaded..');
-    return {users: []}
-  }
+// let loadDB = (cb) => {
+//   if (!fs.existsSync('db.json')) {
+//     console.log('Empty db loaded..');
+//     return {users: []}
+//   }
 
-  let data = fs.readFileSync('db.json');
+//   let data = fs.readFileSync('db.json');
 
-  if (data.length === 0) {
-    console.log('Empty db loaded..');
-    return {users: []}
-  }
+//   if (data.length === 0) {
+//     console.log('Empty db loaded..');
+//     return {users: []}
+//   }
 
-  console.log('Existing db loaded..');
-  return JSON.parse(data);
-}
+//   console.log('Existing db loaded..');
+//   return JSON.parse(data);
+// }
 
-let db = loadDB();
-console.dir(db);
+// let db = loadDB();
+// console.dir(db);
 
 // app.use(express.static('public'));
 // app.use(bodyParser.json());
