@@ -60,6 +60,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+// Force SSL
+app.use(function(req, res, next) {
+  if(!req.secure) {
+    return res.redirect(['https://', req.get('Host'), req.url].join(''));
+  }
+  next();
+});
+
 app.get('/', (req, res) => {
   console.log('Index');
   res.sendFile(path.join(__dirname + '/index.html'));
@@ -319,39 +327,38 @@ app.get('/redirect', (req, res) => {
 //   console.log('╚══════════════════════════╝');
 // });
 
-// greenlock.create({
-//   server: 'staging',
-//   email: 'joshuakcockrell@gmail.com',
-//   agreeTos: true,
-//   approveDomains: [ 'gobyu.ga' ],
-//   app: app
-// }).listen(80, 443);
-
-
-// Redirect http to https
-var http = express.createServer();
-http.get('*', function(req, res) {  
-    res.redirect('https://' + req.headers.host + req.url);
-})
-http.listen(8080);
-
-
-
-require('greenlock-express').create({
-
-  server: 'staging'
-
-, email: 'joshuakcockrell@gmail.com'
-
-, agreeTos: true
-
-, approveDomains: [ 'gobyu.ga' ]
-
-, app: require('express')().use('/', function (req, res) {
-    res.end('Hello, World!');
-  })
-
+greenlock.create({
+  server: 'staging',
+  email: 'joshuakcockrell@gmail.com',
+  agreeTos: true,
+  approveDomains: [ 'gobyu.ga' ],
+  app: app
 }).listen(8000);
+
+// // Redirect http to https
+// var http = express.createServer();
+// http.get('*', function(req, res) {  
+//     res.redirect('https://' + req.headers.host + req.url);
+// })
+// http.listen(8080);
+
+
+
+// require('greenlock-express').create({
+
+//   server: 'staging'
+
+// , email: 'joshuakcockrell@gmail.com'
+
+// , agreeTos: true
+
+// , approveDomains: [ 'gobyu.ga' ]
+
+// , app: require('express')().use('/', function (req, res) {
+//     res.end('Hello, World!');
+//   })
+
+// }).listen(8000);
 
 
 
