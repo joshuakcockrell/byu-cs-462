@@ -319,12 +319,29 @@ app.get('/redirect', (req, res) => {
 //   console.log('╚══════════════════════════╝');
 // });
 
-greenlock.create({
-  server: 'staging',
-  email: 'joshuakcockrell@gmail.com',
-  agreeTos: true,
-  approveDomains: [ 'gobyu.ga' ],
-  app: app
+// greenlock.create({
+//   server: 'staging',
+//   email: 'joshuakcockrell@gmail.com',
+//   agreeTos: true,
+//   approveDomains: [ 'gobyu.ga' ],
+//   app: app
+// }).listen(80, 443);
+
+
+require('greenlock-express').create({
+
+  server: 'staging'
+
+, email: 'joshuakcockrell@gmail.com'
+
+, agreeTos: true
+
+, approveDomains: [ 'gobyu.ga' ]
+
+, app: require('express')().use('/', function (req, res) {
+    res.end('Hello, World!');
+  })
+
 }).listen(80, 443);
 
 
