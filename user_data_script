@@ -22,6 +22,11 @@ sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 800
 # # Delete 1st redirect
 # sudo iptables -t nat -D PREROUTING 1
 
+# Copy letsencrypt to server
+# sudo mkdir sslcert
+# sudo cp /etc/letsencrypt/live/gobyu.ga/fullchain.pem /home/ec2-user/byu-cs-462/sslcert
+# sudo cp /etc/letsencrypt/live/gobyu.ga/privkey.pem /home/ec2-user/byu-cs-462/sslcert
+
 
 # Clone the repo
 echo ''
