@@ -426,8 +426,8 @@ app.get('/', (req, res) => {
 });
 
 var options = {
-  key: fs.readFileSync('./sslcert/fullchain.pem'),
-  cert: fs.readFileSync('./sslcert/privkey.pem')
+  cert: fs.readFileSync('./sslcert/fullchain.pem'),
+  key: fs.readFileSync('./sslcert/privkey.pem')
 };
 
 console.log('options..');
