@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 const util = require('util');
 const express = require('express');
@@ -6,6 +8,9 @@ const app = express();
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const request = require('request');
+const greenlock = require('greenlock-express');
+
+
 
 console.log('starting at:');
 console.log(__dirname);
@@ -308,11 +313,19 @@ app.get('/redirect', (req, res) => {
   }
 });
 
-var server = app.listen(8000, function() {
-  console.log('╔══════════════════════════╗');
-  console.log('║ Server Started Port 8000 ║');
-  console.log('╚══════════════════════════╝');
-});
+// var server = app.listen(8000, function() {
+//   console.log('╔══════════════════════════╗');
+//   console.log('║ Server Started Port 8000 ║');
+//   console.log('╚══════════════════════════╝');
+// });
+
+greenlock.create({
+  server: 'staging',
+  email: 'joshuakcockrell@gmail.com',
+  agreeTos: true,
+  approveDomains: [ 'gobyu.ga' ],
+  app: app
+}).listen(80, 443);
 
 
 
