@@ -159,7 +159,7 @@ app.get('/users', (req, res) => {
     //   }
     // }
 
-    text += "<h1><a href='/logout'>Log out</a></h1>";
+    // text += "<h1><a href='/logout'>Log out</a></h1>";
   }
 
   text += `
