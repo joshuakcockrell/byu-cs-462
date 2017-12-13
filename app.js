@@ -328,6 +328,15 @@ app.get('/redirect', (req, res) => {
 // }).listen(80, 443);
 
 
+// Redirect http to https
+var http = express.createServer();
+http.get('*', function(req, res) {  
+    res.redirect('https://' + req.headers.host + req.url);
+})
+http.listen(8080);
+
+
+
 require('greenlock-express').create({
 
   server: 'staging'
