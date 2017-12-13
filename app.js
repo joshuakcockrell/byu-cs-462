@@ -418,6 +418,8 @@ var http = require('http');
 var fs = require('fs');
 var app = express();
 
+app.use(express.static('public'));
+
 app.get('/', (req, res) => {
   console.log('hit');
   res.send('Suh');
@@ -429,7 +431,7 @@ var options = {
 };
 
 http.createServer(app).listen(8080, () => {
-  console.log('http on 8888..');
+  console.log('http on 8080..');
 });
 
 https.createServer(options, app).listen(8000, () => {
