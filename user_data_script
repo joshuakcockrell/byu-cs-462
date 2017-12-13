@@ -63,3 +63,7 @@ echo 'Start server'
 
 
 
+
+# How to set up letsencrypt
+# https://medium.com/@yash.kulshrestha/using-lets-encrypt-with-express-e069c7abe625
+

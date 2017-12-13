@@ -14,8 +14,6 @@ const request = require('request');
 
 app.use(express.static('public'));
 
-
-
 console.log('starting at:');
 console.log(__dirname);
 
@@ -35,7 +33,7 @@ let clone = (a) => {
 }
 
 let saveDB = () => {
-  json = JSON.stringify(db); //convert it back to json
+  let json = JSON.stringify(db); //convert it back to json
   fs.writeFileSync('db.json', json);
 }
 
