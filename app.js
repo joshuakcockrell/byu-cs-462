@@ -432,9 +432,9 @@ http.createServer(app).listen(8080, () => {
   console.log('http on 8888..');
 });
 
-// https.createServer(options, app).listen(8000, () => {
-//   console.log('https on 8000..');
-// });
+https.createServer(options, app).listen(8000, () => {
+  console.log('https on 8000..');
+});
 
 
 

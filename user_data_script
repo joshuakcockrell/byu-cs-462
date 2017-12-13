@@ -14,7 +14,14 @@ cd /home/ec2-user
 echo ''
 echo '---------------------'
 echo 'Route port 80 to 8000'
-iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8000
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8080
+sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 8000
+
+# # List redirects
+# sudo iptables -t nat -L INPUT --line-numbers
+# # Delete 1st redirect
+# sudo iptables -t nat -D PREROUTING 1
+
 
 # Clone the repo
 echo ''
