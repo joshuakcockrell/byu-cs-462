@@ -120,7 +120,6 @@ let runGossip = () => {
   users.forEach(u => {
     u = u.user;
     console.log(u.id);
-    console.log('333')
     Object.entries(u.otherRumors).forEach(r => {
       console.log('-'+r[0] + ' ' + Object.entries(r[1]).map(x => x[0]));
     });
@@ -140,14 +139,10 @@ app.get('/', (req, res) => {
 // Create user
 app.post('/user', (req, res) => {
   console.log('POST user');
-  console.log(req.body.fname);
 
   // Create gossiping user instance
   let userObj = new User(req.body.fname);
   users.push({id: userObj.id, user: userObj});
-
-  console.dir(userObj);
-  console.dir('11111');
 
   let user = {id: db.users.length + 1, name: req.body.fname, lastLogin: 'Havent logged in yet', userObjId: userObj.id};
   db.users.push(user);
@@ -165,14 +160,9 @@ app.get('/create-gossip', (req, res) => {
 });
 
 app.post('/create-gossip', (req, res) => {
-  console.log('CREATE GOSSIP..');
-  console.log(444)
-  console.dir(users);
-  console.log(555)
-  console.dir(req.cookies.user);
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
-  console.dir(curGossipUser);
   curGossipUser.user.createRumor('test rumor');
+  res.redirect('./create-gossip');
 });
 
 app.get('/gossip', (req, res) => {
