@@ -114,7 +114,7 @@ User.prototype.gossipWith = function(otherUser) {
 
   if (otherMessage.type === 'want') {
     let wants = otherMessage.content;
-    this.sendRumorToUser(otherUser, wants, otherMessage.endpoint
+    this.sendRumorToUser(otherUser, wants, otherMessage.endpoint);
   } else if (otherMessage.type === 'rumor') {
     let rumor = otherMessage.content;
     
