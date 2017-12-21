@@ -149,7 +149,7 @@ app.post('/user', (req, res) => {
   console.dir(userObj);
   console.dir('11111');
 
-  let user = {id: db.users.length + 1, name: req.body.fname, lastLogin: 'Havent logged in yet', userObjId: userObjId};
+  let user = {id: db.users.length + 1, name: req.body.fname, lastLogin: 'Havent logged in yet', userObjId: userObj.id};
   db.users.push(user);
   saveDB();
   return res.redirect('/users');
