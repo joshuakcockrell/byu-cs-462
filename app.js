@@ -101,7 +101,7 @@ let getRandomUser = () => {
 }
 
 let runGossip = () => {
-  console.log();
+  console.log('Run gossip..');
 
   // Random gossip
   let randUser = getRandomUser();
@@ -112,10 +112,13 @@ let runGossip = () => {
 
   randUser.gossipWithUsers(users);
 
+  console.log('222')
+
   // Output users
   users.forEach(u => {
     u = u.user;
     console.log(u.id);
+    console.log('333')
     Object.entries(u.otherRumors).forEach(r => {
       console.log('-'+r[0] + ' ' + Object.entries(r[1]).map(x => x[0]));
     });
