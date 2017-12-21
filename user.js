@@ -150,7 +150,13 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
 
       // EDIT THIS 1234
       "https://gobyu.ga/send-gossip/"+this.id
-      otherUser.receiveRumor(this.otherRumors[id][num+1]);
+
+      request({ url: "https://gobyu.ga/send-gossip/"+otherUser.id,
+        method: 'POST',
+        json: {rumor: this.otherRumors[id][num+1]}
+      }, (err, response, body) => {
+        console.log('SENT RUMOR');
+      });
       sentRumor = true;
       return
     }
@@ -160,7 +166,12 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
   if (!sentRumor) {
 
     // EDIT THIS 1234
-    otherUser.receiveRumor(this.getRandomRumor());
+    request({ url: "https://gobyu.ga/send-gossip/"+otherUser.id,
+      method: 'POST',
+      json: {rumor: this.getRandomRumor()}
+    }, (err, response, body) => {
+      console.log('SENT RUMOR');
+    });
   }
 }
 
