@@ -82,17 +82,15 @@ User.prototype.prepareMessage = function(otherUser) {
   } else {
 
     // Fulfill their wants
-    // If nothing to send
     if (Object.entries(this.otherRumors).length == 0) {
-      // console.log('User '+this.id+' has no messages to send..');
+      // If nothing to send
       return;
     }
-
 
     let theirWantData = otherUser.getWants();
     this.sendRumorToUser(otherUser, theirWantData.want, theirWantData.endpoint);
 
-    return {type: 'rumor', content: this.getRandomRumor(), endpoint: 'https://gobyu.ga/send-gossip/' + this.id}
+    // return {type: 'rumor', content: this.getRandomRumor(), endpoint: 'https://gobyu.ga/send-gossip/' + this.id}
   }
 }
 
@@ -136,8 +134,6 @@ User.prototype.sendRumorToUser = function(otherUser, wants, endpoint) {
     // console.log('User '+this.id+' has no messages to send..');
     return;
   }
-
-  // console.log('Send '+this.id+' to '+otherUser.id)
 
   let sentRumor = false;
 
