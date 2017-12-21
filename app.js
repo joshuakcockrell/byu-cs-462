@@ -273,7 +273,6 @@ app.get('/users', (req, res) => {
   }
 
   let text = '';
-  
 
   if (req.cookies.user !== undefined) {
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
@@ -293,7 +292,7 @@ app.get('/users', (req, res) => {
     text += '</ul>';
 
     // Create gossip form
-    let text = `
+    text += `
 <h1>Create some gossip</h1>
 
 <form action="/create-gossip" method="post">
