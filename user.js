@@ -121,8 +121,8 @@ User.prototype.gossipWith = function(otherUser) {
       method: 'POST',
       json: {rumor: rumor}
     }, (err, response, body) => {
-      console.log('SENT');
-    }
+      console.log('SENT RUMOR');
+    });
     if (!err && response.statusCode == 200) {
   }
 }
