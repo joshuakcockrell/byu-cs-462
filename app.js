@@ -91,9 +91,6 @@ let getUser = (id) => {
 }
 
 let getRandomUser = () => {
-  console.log('getRandomUser..');
-  console.dir(users);
-  console.log(users.length);
   if (users.length === 0) {
     console.log('no users to get..');
     return undefined;
@@ -108,13 +105,10 @@ let runGossip = () => {
   let randUser = getRandomUser();
 
   if (randUser === undefined) {
-    console.log('No user to run..');
     return;
   }
 
   randUser.gossipWithUsers(users);
-
-  console.log('222')
 
   // Output users
   users.forEach(u => {
