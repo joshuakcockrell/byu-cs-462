@@ -93,6 +93,7 @@ let getUser = (id) => {
 let getRandomUser = () => {
   console.log('getRandomUser..');
   console.dir(users);
+  console.log(users.length);
   if (users.length === 0) {
     console.log('no users to get..');
     return undefined;
