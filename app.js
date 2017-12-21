@@ -144,8 +144,7 @@ app.post('/user', (req, res) => {
 
   // Create gossiping user instance
   let userObj = new User(req.body.fname);
-  let userObjId = userObj.id;
-  users.push(userObj);
+  users.push({id: userObj.id, user: userObj});
 
   console.dir(userObj);
   console.dir('11111');
