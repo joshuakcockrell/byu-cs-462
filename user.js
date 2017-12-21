@@ -1,6 +1,7 @@
 'using strict';
 
 const uuidv4 = require('uuid/v4');
+const request = require('request');
 
 function User(name) {
   this.id = uuidv4().substring(0, 4);
@@ -25,6 +26,7 @@ User.prototype.createRumor = function(text) {
     'endpoint': 'https://gobyu.ga/gossip/' + this.id 
   }
 
+  // Send it to ourselves
   this.createdRumors.push(rumor);
   this.receiveRumor(rumor);
   return rumor;
@@ -90,6 +92,8 @@ User.prototype.prepareMessage = function(otherUser) {
   }
 }
 
+
+// EDIT THIS
 User.prototype.gossipWith = function(otherUser) {
 
   if (this.id === otherUser.id) {
@@ -99,8 +103,8 @@ User.prototype.gossipWith = function(otherUser) {
 
   let otherMessage = otherUser.prepareMessage(this);
 
+  // User has no messages to gossip
   if (otherMessage === undefined) {
-    // console.log('..User has no messages to gossip');
     return;
   }
 
@@ -109,10 +113,22 @@ User.prototype.gossipWith = function(otherUser) {
     this.sendRumorToUser(otherUser, wants);
   } else if (otherMessage.type === 'rumor') {
     let rumor = otherMessage.content;
-    this.receiveRumor(rumor);
+
+    // EDIT 1234
+    // this.receiveRumor(rumor);
+    
+    request({ url: "https://gobyu.ga/send-gossip/"+this.id, 
+      method: 'POST',
+      json: {rumor: rumor}
+    }, (err, response, body) => {
+      console.log('SENT');
+    }
+    if (!err && response.statusCode == 200) {
   }
 }
 
+
+// EDIT THIS
 User.prototype.sendRumorToUser = function(otherUser, wants) {
 
   // If we don't have anything to send
@@ -132,6 +148,9 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
 
     // Send rumor if we have it
     if (this.otherRumors[id] && this.otherRumors[id][num+1]) {
+
+      // EDIT THIS 1234
+      "https://gobyu.ga/send-gossip/"+this.id
       otherUser.receiveRumor(this.otherRumors[id][num+1]);
       sentRumor = true;
       return
@@ -140,6 +159,8 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
 
   // Send them a random rumor
   if (!sentRumor) {
+
+    // EDIT THIS 1234
     otherUser.receiveRumor(this.getRandomRumor());
   }
 }

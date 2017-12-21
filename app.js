@@ -72,8 +72,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-
-
 ////////////////
 // Gossip Lab //
 ////////////////
@@ -209,7 +207,7 @@ app.post('/create-gossip', (req, res) => {
 app.post('/send-gossip/:id', (req, res) => {
   
   let targetUser = getUser(req.params.id);
-  targetUser.createdRumors.push(rumor);
+  let rumor = req.body.rumor;
   targetUser.receiveRumor(rumor);
 
   res.send('gossip received..');
