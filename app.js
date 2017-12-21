@@ -120,7 +120,7 @@ let runGossip = () => {
   });
 }
 
-setInterval(runGossip,2000);
+setInterval(runGossip,200);
 
 
 
@@ -165,7 +165,8 @@ app.get('/create-gossip', (req, res) => {
 
 app.post('/create-gossip', (req, res) => {
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
-  curGossipUser.user.createRumor('test rumor');
+  console.log(req.body.gossip);
+  curGossipUser.user.createRumor(req.body.gossip);
   res.redirect('./create-gossip');
 });
 
