@@ -213,7 +213,7 @@ app.post('/send-gossip/:id', (req, res) => {
   targetUser.receiveRumor(rumor);
 
   res.send('gossip received..');
-}
+});
 
 // View user profile
 app.get('/view/:id', (req, res) => {
