@@ -91,14 +91,25 @@ let getUser = (id) => {
 }
 
 let getRandomUser = () => {
+  console.log('getRandomUser..');
+  if (users.length == 0) {
+    console.log('no users to get..');
+    return;
+  }
   return users[Math.floor(Math.random() * users.length)].user;
 }
 
 let runGossip = () => {
   console.log();
 
-  // Random gossib
-  getRandomUser().gossipWithUsers(users);
+  // Random gossip
+  let randUser = getRandomUser();
+
+  if (randUser === undefined) {
+    return;
+  }
+
+  randUser.gossipWithUsers(users);
 
   // Output users
   users.forEach(u => {

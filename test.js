@@ -2,7 +2,6 @@
 
 var User = require("./user.js");
 
-
 let user = new User('frank');
 let userId = user.id; // save this
 users.push({id: user.id, user: user});
