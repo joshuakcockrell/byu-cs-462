@@ -120,9 +120,7 @@ let runGossip = () => {
   });
 }
 
-setInterval(runGossip,200);
-
-
+setInterval(runGossip,1000);
 
 // Index page
 app.get('/', (req, res) => {
@@ -150,7 +148,6 @@ app.get('/gossip/:id', (req, res) => {
 });
 
 app.get('/gossip', (req, res) => {
-  console.log(1111111)
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
   let rumors = curGossipUser.user.otherRumors;
 
@@ -171,7 +168,7 @@ app.get('/gossip', (req, res) => {
 app.get('/create-gossip', (req, res) => {
 
   let text = `
-<h1>Create some gossip hehehe</h1>
+<h1>Create some gossip</h1>
 
 <form action="/create-gossip" method="post">
   Gossip: <input type="text" name="gossip"><br>
@@ -322,6 +319,7 @@ app.post('/test', (req, res) => {
 // Drop db
 app.get('/drop-db', (req, res) => {
   db = {users: []};
+  users = [];
   saveDB();
   res.clearCookie('user');
   return res.redirect('/users');
