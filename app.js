@@ -149,6 +149,11 @@ app.get('/gossip/:id', (req, res) => {
   res.redirect('/view/'+req.params.id);
 });
 
+app.get('/gossip', (req, res) => {
+  let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
+  res.json(curGossipUser.otherRumors);
+});
+
 app.get('/create-gossip', (req, res) => {
   res.sendFile(path.join(__dirname + '/gossip.html'));
 });
