@@ -273,6 +273,7 @@ app.get('/users', (req, res) => {
   }
 
   let text = '';
+  
 
   if (req.cookies.user !== undefined) {
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
