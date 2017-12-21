@@ -89,8 +89,6 @@ User.prototype.prepareMessage = function(otherUser) {
 
     let theirWantData = otherUser.getWants();
     this.sendRumorToUser(otherUser, theirWantData.want, theirWantData.endpoint);
-
-    // return {type: 'rumor', content: this.getRandomRumor(), endpoint: 'https://gobyu.ga/send-gossip/' + this.id}
   }
 }
 
