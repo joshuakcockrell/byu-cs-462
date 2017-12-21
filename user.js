@@ -123,7 +123,6 @@ User.prototype.gossipWith = function(otherUser) {
     }, (err, response, body) => {
       console.log('SENT RUMOR');
     });
-    if (!err && response.statusCode == 200) {
   }
 }
 
