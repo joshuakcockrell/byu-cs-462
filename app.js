@@ -145,13 +145,14 @@ app.post('/user', (req, res) => {
 });
 
 app.get('/gossip/:id', (req, res) => {
-  console.log(req.params.id);
+  // console.log(req.params.id);
   res.redirect('/view/'+req.params.id);
 });
 
 app.get('/gossip', (req, res) => {
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
-  res.json(curGossipUser.otherRumors);
+  console.dir(curGossipUser);
+  return res.json(curGossipUser.otherRumors);
 });
 
 app.get('/create-gossip', (req, res) => {

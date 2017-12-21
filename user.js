@@ -79,7 +79,7 @@ User.prototype.prepareMessage = function(otherUser) {
     // Fulfill their wants
     // If nothing to send
     if (Object.entries(this.otherRumors).length == 0) {
-      console.log('User '+this.id+' has no messages to send..');
+      // console.log('User '+this.id+' has no messages to send..');
       return;
     }
 
@@ -93,14 +93,14 @@ User.prototype.prepareMessage = function(otherUser) {
 User.prototype.gossipWith = function(otherUser) {
 
   if (this.id === otherUser.id) {
-    console.log('Cant send rumor to self..');
+    // console.log('Cant send rumor to self..');
     return;
   }
 
   let otherMessage = otherUser.prepareMessage(this);
 
   if (otherMessage === undefined) {
-    console.log('..User has no messages to gossip');
+    // console.log('..User has no messages to gossip');
     return;
   }
 
@@ -117,11 +117,11 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
 
   // If we don't have anything to send
   if (Object.entries(this.otherRumors).length == 0) {
-    console.log('User '+this.id+' has no messages to send..');
+    // console.log('User '+this.id+' has no messages to send..');
     return;
   }
 
-  console.log('Send '+this.id+' to '+otherUser.id)
+  // console.log('Send '+this.id+' to '+otherUser.id)
 
   let sentRumor = false;
 
@@ -152,7 +152,6 @@ User.prototype.getRandomRumor = function() {
   let randRumorNum = Object.keys(this.otherRumors[randId])[Math.floor(Math.random() * Object.keys(this.otherRumors[randId]).length)];
   let randRumor = this.otherRumors[randId][randRumorNum];
 
-  console.log('Send random..');
   return randRumor;
 }
 
