@@ -66,7 +66,6 @@ User.prototype.getWants = function() {
     });
 
     return {'want': output, 'endpoint': 'https://gobyu.ga/send-gossip/' + this.id}
-};
 }
 
 User.prototype.prepareMessage = function(otherUser) {
