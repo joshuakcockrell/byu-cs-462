@@ -70,6 +70,8 @@ User.prototype.getWants = function() {
 
 User.prototype.prepareMessage = function(otherUser) {
 
+  // Either send a want or a message to fulfill a want
+
   // Random choice
   if (Math.random() > 0.5) {
 
@@ -88,7 +90,7 @@ User.prototype.prepareMessage = function(otherUser) {
 
 
     let theirWantData = otherUser.getWants();
-    this.sendRumorToUser(otherUser, theirWantData.want);
+    this.sendRumorToUser(otherUser, theirWantData.want, theirWantData.endpoint);
 
     return {type: 'rumor', content: this.getRandomRumor(), endpoint: 'https://gobyu.ga/send-gossip/' + this.id}
   }
@@ -112,11 +114,11 @@ User.prototype.gossipWith = function(otherUser) {
 
   if (otherMessage.type === 'want') {
     let wants = otherMessage.content;
-    this.sendRumorToUser(otherUser, wants);
+    this.sendRumorToUser(otherUser, wants, otherMessage.endpoint
   } else if (otherMessage.type === 'rumor') {
     let rumor = otherMessage.content;
     
-    request({ url: "https://gobyu.ga/send-gossip/"+this.id, 
+    request({ url: otherMessage.endpoint, 
       method: 'POST',
       json: {rumor: rumor}
     }, (err, response, body) => {
@@ -127,7 +129,7 @@ User.prototype.gossipWith = function(otherUser) {
 
 
 // EDIT THIS
-User.prototype.sendRumorToUser = function(otherUser, wants) {
+User.prototype.sendRumorToUser = function(otherUser, wants, endpoint) {
 
   // If we don't have anything to send
   if (Object.entries(this.otherRumors).length == 0) {
@@ -140,8 +142,6 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
   let sentRumor = false;
 
   wants.forEach(w => {
-    console.log('11111111111111')
-    console.dir(wants);
     w = Object.entries(w)[0];
     let id = w[0];
     let num = w[1];
@@ -149,7 +149,7 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
     // Send rumor if we have it
     if (this.otherRumors[id] && this.otherRumors[id][num+1]) {
 
-      request({ url: "https://gobyu.ga/send-gossip/"+otherUser.id,
+      request({ url: endpoint,
         method: 'POST',
         json: {rumor: this.otherRumors[id][num+1]}
       }, (err, response, body) => {
@@ -163,7 +163,7 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
   // Send them a random rumor
   if (!sentRumor) {
 
-    request({ url: "https://gobyu.ga/send-gossip/"+otherUser.id,
+    request({ url: endpoint,
       method: 'POST',
       json: {rumor: this.getRandomRumor()}
     }, (err, response, body) => {
