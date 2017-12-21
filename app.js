@@ -153,7 +153,7 @@ app.get('/gossip', (req, res) => {
   console.log(1111111)
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
   console.dir(curGossipUser);
-  return res.json(curGossipUser.otherRumors);
+  return res.json(curGossipUser.user.otherRumors);
 });
 
 app.get('/create-gossip', (req, res) => {
