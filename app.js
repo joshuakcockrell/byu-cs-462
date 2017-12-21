@@ -152,8 +152,11 @@ app.get('/gossip/:id', (req, res) => {
 app.get('/gossip', (req, res) => {
   console.log(1111111)
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
-  console.dir(curGossipUser);
-  return res.json(curGossipUser.user.otherRumors);
+  let rumors = curGossipUser.user.otherRumors;
+
+  // Keep all the important stuff
+  let messages = [].concat.apply([], Object.values(rumors).map(a => Object.values(a))).map(b => b.rumor).map(x => {return {from:x.originator, rumor:x.text}})
+  return res.json(messages);
 });
 
 app.get('/create-gossip', (req, res) => {
