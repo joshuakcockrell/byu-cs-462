@@ -18,6 +18,8 @@ app.use(express.static('public'));
 console.log('starting at:');
 console.log(__dirname);
 
+let timeBetweenUpdates = 100;
+
 // Override console.log to also write to output.log file
 const log_file = fs.createWriteStream(__dirname + '/output.log', {flags : 'a'});
 console.log = (d) => { //
@@ -101,15 +103,13 @@ let runGossip = () => {
 
   // Random gossip
   let randUser = getRandomUser();
+  let randUser2 = getRandomUser();
 
   if (randUser === undefined) {
     return;
   }
 
-  let randUser2 = getRandomUser();
   randUser.gossipWith(randUser2);
-
-  // randUser.gossipWithUsers(users);
 
   // Output users
   users.forEach(u => {
@@ -120,8 +120,6 @@ let runGossip = () => {
     });
   });
 }
-
-setInterval(runGossip,1000);
 
 // Index page
 app.get('/', (req, res) => {
@@ -490,6 +488,9 @@ https.createServer(sslOptions, app).listen(8000, () => {
   console.log('╚══════════════════════════╝');
 });
 
+
+
+setInterval(runGossip,timeBetweenUpdates);
 
 
 

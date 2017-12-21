@@ -175,11 +175,6 @@ User.prototype.getRandomRumor = function() {
   return randRumor;
 }
 
-User.prototype.gossipWithUsers = function(users) {
-  let randUser = users[Math.floor(Math.random() * users.length)].user;
-  this.gossipWith(randUser);
-}
-
 module.exports = User;
 
 
