@@ -95,7 +95,7 @@ let getRandomUser = () => {
   console.dir(users);
   if (users.length == 0) {
     console.log('no users to get..');
-    return;
+    return undefined;
   }
   return users[Math.floor(Math.random() * users.length)].user;
 }
@@ -107,6 +107,7 @@ let runGossip = () => {
   let randUser = getRandomUser();
 
   if (randUser === undefined) {
+    console.log('No user to run..');
     return;
   }
 
