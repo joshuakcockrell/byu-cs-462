@@ -108,7 +108,10 @@ let runGossip = () => {
     return;
   }
 
-  randUser.gossipWithUsers(users);
+  let randUser2 = getRandomUser();
+  randUser.gossipWith(randUser2);
+
+  // randUser.gossipWithUsers(users);
 
   // Output users
   users.forEach(u => {
@@ -194,12 +197,23 @@ app.get('/create-gossip', (req, res) => {
   res.send(text);
 });
 
+// Create rumor for logged in user
 app.post('/create-gossip', (req, res) => {
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
   console.log(req.body.gossip);
   curGossipUser.user.createRumor(req.body.gossip);
   res.redirect('./users');
 });
+
+// Send rumor direct to user
+app.post('/send-gossip/:id', (req, res) => {
+  
+  let targetUser = getUser(req.params.id);
+  targetUser.createdRumors.push(rumor);
+  targetUser.receiveRumor(rumor);
+
+  res.send('gossip received..');
+}
 
 // View user profile
 app.get('/view/:id', (req, res) => {
