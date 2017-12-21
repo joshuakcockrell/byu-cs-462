@@ -139,7 +139,7 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
 
   wants.forEach(w => {
     console.log('11111111111111')
-    console.dir(w);
+    console.dir(wants);
     w = Object.entries(w)[0];
     let id = w[0];
     let num = w[1];
