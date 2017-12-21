@@ -166,10 +166,13 @@ app.get('/create-gossip', (req, res) => {
 
 app.post('/create-gossip', (req, res) => {
   console.log('CREATE GOSSIP..');
+  console.log(444)
   console.dir(users);
+  console.log(555)
+  console.dir(req.cookies.user);
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
-  console.log(curGossipUser);
-  curGossipUser.createRumor('test rumor');
+  console.dir(curGossipUser);
+  curGossipUser.user.createRumor('test rumor');
 });
 
 app.get('/gossip', (req, res) => {
