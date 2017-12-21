@@ -134,11 +134,15 @@ app.get('/', (req, res) => {
 // Create user
 app.post('/user', (req, res) => {
   console.log('POST user');
+  console.log(req.body.fname);
 
   // Create gossiping user instance
   let userObj = new User(req.body.fname);
   let userObjId = userObj.id;
   users.push(userObj);
+
+  console.dir(userObj);
+  console.dir('11111');
 
   let user = {id: db.users.length + 1, name: req.body.fname, lastLogin: 'Havent logged in yet', userObjId: userObjId};
   db.users.push(user);
