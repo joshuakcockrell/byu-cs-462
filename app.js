@@ -198,7 +198,7 @@ app.post('/create-gossip', (req, res) => {
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
   console.log(req.body.gossip);
   curGossipUser.user.createRumor(req.body.gossip);
-  res.redirect('./create-gossip');
+  res.redirect('./users');
 });
 
 // View user profile
@@ -290,6 +290,19 @@ app.get('/users', (req, res) => {
       text += '<li>'+m.from+': '+m.rumor+'</li>';
     });
     text += '</ul>';
+
+    // Create gossip form
+    let text = `
+<h1>Create some gossip</h1>
+
+<form action="/create-gossip" method="post">
+  Gossip: <input type="text" name="gossip"><br>
+  <input type="submit" value="Submit">
+</form>
+
+<a href="/users">Back to users</a>
+`;
+
   }
 
   text += `
