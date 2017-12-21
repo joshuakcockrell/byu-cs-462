@@ -60,12 +60,13 @@ User.prototype.getWants = function() {
 
       // Add the end if we didn't find one
       if (!added) {
-        output.push({[user]: Object.entries(messages).length-1})
+        output.push({[user]: Object.entries(messages).length-1,})
       }
 
     });
 
-    return output;
+    return {'want': output, 'endpoint': 'https://gobyu.ga/send-gossip/' + this.id}
+};
 }
 
 User.prototype.prepareMessage = function(otherUser) {
@@ -74,8 +75,9 @@ User.prototype.prepareMessage = function(otherUser) {
   if (Math.random() > 0.5) {
 
     // Send our wants
-    let content = this.getWants();
-    return {type: 'wants', content: content}
+    let wantData = this.getWants();
+
+    return {type: 'wants', content: wantData.want, endpoint: wantData.endpoint}
   } else {
 
     // Fulfill their wants
@@ -85,10 +87,11 @@ User.prototype.prepareMessage = function(otherUser) {
       return;
     }
 
-    let theirWants = otherUser.getWants();
-    this.sendRumorToUser(otherUser, theirWants);
 
-    return {type: 'rumor', content: this.getRandomRumor()}
+    let theirWantData = otherUser.getWants();
+    this.sendRumorToUser(otherUser, theirWantData.want);
+
+    return {type: 'rumor', content: this.getRandomRumor(), endpoint: 'https://gobyu.ga/send-gossip/' + this.id}
   }
 }
 
