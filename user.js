@@ -146,8 +146,6 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
 
 User.prototype.getRandomRumor = function() {
 
-  console.dir(this.otherRumors);
-
   let randId = Object.keys(this.otherRumors)[Math.floor(Math.random() * Object.keys(this.otherRumors).length)];
   let randRumorNum = Object.keys(this.otherRumors[randId])[Math.floor(Math.random() * Object.keys(this.otherRumors[randId]).length)];
   let randRumor = this.otherRumors[randId][randRumorNum];
