@@ -155,8 +155,13 @@ app.get('/gossip', (req, res) => {
   let rumors = curGossipUser.user.otherRumors;
 
   // Keep all the important stuff
-  let messages = [].concat.apply([], Object.values(rumors).map(a => Object.values(a))).map(b => b.rumor).map(x => {return {from:x.originator, rumor:x.text}})
-  return res.json(messages);
+  let messages = [].concat.apply([], Object.values(rumors).map(a => Object.values(a))).map(b => b.rumor).map(x => {return {from:x.originator, rumor:x.text}});
+
+  let text = '';
+  messages.forEach(m => {
+    text += '<h4>'+m.from+': '+m.rumor+'</h4>';
+  });
+  return res.send(text);
 });
 
 app.get('/create-gossip', (req, res) => {
