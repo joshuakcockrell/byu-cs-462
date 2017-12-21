@@ -156,7 +156,10 @@ app.get('/create-gossip', (req, res) => {
 });
 
 app.post('/create-gossip', (req, res) => {
+  console.log('CREATE GOSSIP..');
+  console.dir(users);
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
+  console.log(curGossipUser);
   curGossipUser.createRumor('test rumor');
 });
 
