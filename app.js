@@ -150,6 +150,7 @@ app.get('/gossip/:id', (req, res) => {
 });
 
 app.get('/gossip', (req, res) => {
+  console.log(1111111)
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
   console.dir(curGossipUser);
   return res.json(curGossipUser.otherRumors);
@@ -163,13 +164,6 @@ app.post('/create-gossip', (req, res) => {
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
   curGossipUser.user.createRumor('test rumor');
   res.redirect('./create-gossip');
-});
-
-app.get('/gossip', (req, res) => {
-  console.log('GET GOSSIP gossip..');
-  let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
-  console.dir(curGossipUser);
-  req.json(curGossipUser);
 });
 
 // View user profile
