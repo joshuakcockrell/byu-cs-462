@@ -189,7 +189,7 @@ app.get('/create-gossip', (req, res) => {
   messages.forEach(m => {
     text += '<li>'+m.from+': '+m.rumor+'</li>';
   });
-  text += '</ul>'
+  text += '</ul>';
 
   res.send(text);
 });
@@ -277,6 +277,19 @@ app.get('/users', (req, res) => {
   if (req.cookies.user !== undefined) {
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
     text += '<a href="/create-gossip">Create Gossip</a>';
+
+    let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
+    let rumors = curGossipUser.user.otherRumors;
+
+    // Keep all the important stuff
+    let messages = [].concat.apply([], Object.values(rumors).map(a => Object.values(a))).map(b => b.rumor).map(x => {return {from:x.originator, rumor:x.text}});
+
+    text += '<h3>Gossip</h3>';
+    text += '<ul>';
+    messages.forEach(m => {
+      text += '<li>'+m.from+': '+m.rumor+'</li>';
+    });
+    text += '</ul>';
   }
 
   text += `
