@@ -166,7 +166,9 @@ app.post('/create-gossip', (req, res) => {
 });
 
 app.get('/gossip', (req, res) => {
+  console.log('GET GOSSIP gossip..');
   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
+  console.dir(curGossipUser);
   req.json(curGossipUser);
 });
 
