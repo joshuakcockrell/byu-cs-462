@@ -11,6 +11,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const request = require('request');
 
+var User = require("./user.js");
 
 app.use(express.static('public'));
 
@@ -32,6 +33,7 @@ let clone = (a) => {
    return JSON.parse(JSON.stringify(a));
 }
 
+// DB Methods
 let saveDB = () => {
   let json = JSON.stringify(db); //convert it back to json
   fs.writeFileSync('db.json', json);
@@ -70,20 +72,85 @@ app.use(function(req, res, next) {
   next();
 });
 
+
+
+////////////////
+// Gossip Lab //
+////////////////
+let users = [];
+let getUser = (id) => {
+
+  let result = undefined;
+  users.forEach(u => {
+    if (u.id == id) {
+      result = u.user;
+    }
+  });
+  return result;
+  console.log('USER DOESNT EXIST!');
+}
+
+let getRandomUser = () => {
+  return users[Math.floor(Math.random() * users.length)].user;
+}
+
+let runGossip = () => {
+  console.log();
+
+  // Random gossib
+  getRandomUser().gossipWithUsers(users);
+
+  // Output users
+  users.forEach(u => {
+    u = u.user;
+    console.log(u.id);
+    Object.entries(u.otherRumors).forEach(r => {
+      console.log('-'+r[0] + ' ' + Object.entries(r[1]).map(x => x[0]));
+    });
+  });
+}
+
+setInterval(runGossip,2000);
+
+
+
+// Index page
 app.get('/', (req, res) => {
   console.log('Index');
   res.sendFile(path.join(__dirname + '/index.html'));
 });
 
+// Create user
 app.post('/user', (req, res) => {
   console.log('POST user');
-  let user = {id: db.users.length + 1, name: req.body.fname, lastLogin: 'Havent logged in yet'};
+
+  // Create gossiping user instance
+  let userObj = new User(req.body.fname);
+  let userObjId = userObj.id;
+  users.push(userObj);
+
+  let user = {id: db.users.length + 1, name: req.body.fname, lastLogin: 'Havent logged in yet', userObjId: userObjId};
   db.users.push(user);
   saveDB();
   return res.redirect('/users');
 });
 
-// View user
+app.get('/gossip/:id', (req, res) => {
+  console.log(req.params.id);
+  res.redirect('/view/'+req.params.id);
+});
+
+app.post('/create-gossip', (req, res) => {
+  let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
+  curGossipUser.createRumor('test rumor');
+});
+
+app.get('/gossip', (req, res) => {
+  let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
+  req.json(curGossipUser);
+});
+
+// View user profile
 app.get('/view/:id', (req, res) => {
   let user = db.users.find(user => user.id == req.params.id);
   if (user === undefined) { return res.json({message: 'user not found'}); }
@@ -144,6 +211,7 @@ app.get('/logout', (req, res) => {
   return res.redirect('/users');
 });
 
+// View all users
 app.get('/users', (req, res) => {
 
   // Wipe cookie if user is gone
@@ -196,6 +264,7 @@ app.post('/test', (req, res) => {
   res.json({query: req.query, body: req.body, headers: req.headers});
 });
 
+// Drop db
 app.get('/drop-db', (req, res) => {
   db = {users: []};
   saveDB();
@@ -203,6 +272,7 @@ app.get('/drop-db', (req, res) => {
   return res.redirect('/users');
 });
 
+// Foursquare redirect
 app.get('/fredirect', (req, res) => {
   console.log('--fredirect--');
 
@@ -277,6 +347,7 @@ app.get('/fredirect', (req, res) => {
   });
 });
 
+// View accept header
 app.get('/accept', (req, res) => {
 
   if (req.headers.accept === 'application/vnd.byu.cs462.v1+json') {
@@ -288,6 +359,7 @@ app.get('/accept', (req, res) => {
   return res.json({message: 'not a valid accept header', header: req.headers.accept});
 });
 
+// Redirect lab
 app.get('/redirect', (req, res) => {
   console.log('redirect');
 
@@ -314,12 +386,7 @@ http.createServer((req, res) => {
   console.log('http redirect on 8080..');
 });
 
-// // Redirect HTTP to HTTPS
-// http.get('*', function(req, res) {  
-//     res.redirect('https://' + req.headers.host + req.url);
-// })
-// http.listen(8080);
-
+// Certificate locations for https
 var sslOptions = {
   cert: fs.readFileSync('./sslcert/fullchain.pem'),
   key: fs.readFileSync('./sslcert/privkey.pem')
