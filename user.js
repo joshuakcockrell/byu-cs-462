@@ -23,7 +23,7 @@ User.prototype.createRumor = function(text) {
       'originator': this.name,
       'text': text 
     },
-    'endpoint': 'https://gobyu.ga/gossip/' + this.id 
+    'endpoint': 'https://gobyu.ga/send-gossip/' + this.id 
   }
 
   // Send it to ourselves
@@ -113,9 +113,6 @@ User.prototype.gossipWith = function(otherUser) {
     this.sendRumorToUser(otherUser, wants);
   } else if (otherMessage.type === 'rumor') {
     let rumor = otherMessage.content;
-
-    // EDIT 1234
-    // this.receiveRumor(rumor);
     
     request({ url: "https://gobyu.ga/send-gossip/"+this.id, 
       method: 'POST',
@@ -141,15 +138,14 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
   let sentRumor = false;
 
   wants.forEach(w => {
+    console.log('11111111111111')
+    console.dir(w);
     w = Object.entries(w)[0];
     let id = w[0];
     let num = w[1];
 
     // Send rumor if we have it
     if (this.otherRumors[id] && this.otherRumors[id][num+1]) {
-
-      // EDIT THIS 1234
-      "https://gobyu.ga/send-gossip/"+this.id
 
       request({ url: "https://gobyu.ga/send-gossip/"+otherUser.id,
         method: 'POST',
@@ -165,7 +161,6 @@ User.prototype.sendRumorToUser = function(otherUser, wants) {
   // Send them a random rumor
   if (!sentRumor) {
 
-    // EDIT THIS 1234
     request({ url: "https://gobyu.ga/send-gossip/"+otherUser.id,
       method: 'POST',
       json: {rumor: this.getRandomRumor()}
