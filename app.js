@@ -18,7 +18,10 @@ app.use(express.static('public'));
 console.log('starting at:');
 console.log(__dirname);
 
-let timeBetweenUpdates = 100;
+const timeBetweenUpdates = 200;
+const httpsPort = 8000;
+const httpPort = process.argv[2];
+const dbPath = httpPort+'db.json';
 
 // Override console.log to also write to output.log file
 const log_file = fs.createWriteStream(__dirname + '/output.log', {flags : 'a'});
@@ -37,28 +40,55 @@ let clone = (a) => {
 
 // DB Methods
 let saveDB = () => {
+  db.usersSaved = users;
   let json = JSON.stringify(db); //convert it back to json
-  fs.writeFileSync('db.json', json);
+  fs.writeFileSync(dbPath, json);
 }
 
 let loadDB = (cb) => {
-  if (!fs.existsSync('db.json')) {
+  if (!fs.existsSync(dbPath)) {
     console.log('Empty db loaded..');
-    return {users: []}
+    return {users: [], usersSaved: []}
   }
 
-  let data = fs.readFileSync('db.json');
+  let data = fs.readFileSync(dbPath);
 
   if (data.length === 0) {
     console.log('Empty db loaded..');
-    return {users: []}
+    return {users: [], usersSaved: []}
   }
 
   console.log('Existing db loaded..');
   return JSON.parse(data);
 }
 
+let convertToUserObjects = (users) => {
+
+  let outputUsers = [];
+  if (users.length === 0) { return outputUsers; }
+
+  users.forEach(u => {
+    let newUser = new User(u.name, u.endpoint, u.id, u.createdRumors, u.rumors, u.wants, u.knownNeighbors);
+    console.dir(newUser);
+    console.dir(newUser.id);
+    outputUsers.push({id: newUser.id, user: newUser});
+  });
+
+  // Update with all previously existing users
+  outputUsers.forEach(u => {
+    let user = u.user;
+    outputUsers.forEach(u2 => {
+      let user2 = u2.user;
+      user2.notifyOfNewUserEndpoint(user.endpoint);
+    });
+  });
+  return outputUsers;
+}
+
 let db = loadDB();
+let users = [];
+users = db.usersSaved;
+users = convertToUserObjects(users);
 console.dir(db);
 
 app.use(express.static('public'));
@@ -66,58 +96,80 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
-// Force SSL
-app.use(function(req, res, next) {
-  if(!req.secure) {
-    return res.redirect(['https://', req.get('Host'), req.url].join(''));
-  }
-  next();
-});
-
 ////////////////
 // Gossip Lab //
 ////////////////
-let users = [];
-let getUser = (id) => {
 
+let getUser = (id) => {
   let result = undefined;
-  users.forEach(u => {
+  users.forEach(u1 => {
+    let u = u1.user;
     if (u.id == id) {
-      result = u.user;
+      result = u;
     }
   });
   return result;
-  console.log('USER DOESNT EXIST!');
 }
 
-let getRandomUser = () => {
-  if (users.length === 0) {
-    console.log('no users to get..');
-    return undefined;
-  }
-  return users[Math.floor(Math.random() * users.length)].user;
+let addKnownUser = (endpoint) => {
+  console.log('addKnownUser: ' + endpoint);
+  users.forEach(u => { 
+    let user = u.user;
+    user.notifyOfNewUserEndpoint(endpoint);
+  });
+}
+
+let randomLocalUser = function() {
+  console.dir(users);
+  let randNeighbor = users[Math.floor(Math.random()*users.length)];
+  console.log(999);
+  console.dir(randNeighbor);
+  console.log(1999)
+  console.log(Object.getOwnPropertyNames(randNeighbor.user));
+  return randNeighbor.user;
 }
 
 let runGossip = () => {
-  console.log('Run gossip..');
 
-  // Random gossip
-  let randUser = getRandomUser();
-  let randUser2 = getRandomUser();
-
-  if (randUser === undefined) {
+  if (users.length === 0) {
     return;
   }
 
-  randUser.gossipWith(randUser2);
-
-  // Output users
+  // Log what each user has
   users.forEach(u => {
-    u = u.user;
-    console.log(u.id);
-    Object.entries(u.otherRumors).forEach(r => {
+    let user = u.user;
+    console.log(user.id);
+    Object.entries(user.rumors).forEach(r => {
       console.log('-'+r[0] + ' ' + Object.entries(r[1]).map(x => x[0]));
     });
+  });
+
+  let randUser = randomLocalUser();
+  if (randUser === undefined) { 
+    console.log('no users..');
+    return; 
+  }
+
+  let message = randUser.prepareMessage();
+  if (message === undefined) { 
+    console.log('nothing to send..');
+    return; 
+  }
+
+  console.log('send to user: ' + message.sendTo + ' from ' + randUser.id);
+
+  // console.dir(message);
+
+  request.post({
+    url: message.sendTo,
+    body: JSON.stringify(message),
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  }, function(error, response, body){
+    if (response !== undefined) {
+      console.log(response.statusCode);
+    }
   });
 }
 
@@ -130,10 +182,22 @@ app.get('/', (req, res) => {
 // Create user
 app.post('/user', (req, res) => {
   console.log('POST user');
+  console.dir(req.body);
 
   // Create gossiping user instance
   let userObj = new User(req.body.fname);
+
+  // Update with all previously existing users
+  users.forEach(u => {
+    let user = u.user;
+    userObj.notifyOfNewUserEndpoint(user.endpoint);
+  });
+
+  let userEndpoint = userObj.endpoint;
   users.push({id: userObj.id, user: userObj});
+  addKnownUser(userEndpoint);
+
+  console.log(users);
 
   let user = {id: db.users.length + 1, name: req.body.fname, lastLogin: 'Havent logged in yet', userObjId: userObj.id};
   db.users.push(user);
@@ -141,56 +205,11 @@ app.post('/user', (req, res) => {
   return res.redirect('/users');
 });
 
-app.get('/gossip/:id', (req, res) => {
-  // console.log(req.params.id);
-  res.redirect('/view/'+req.params.id);
-});
-
-app.get('/gossip', (req, res) => {
-  let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
-  let rumors = curGossipUser.user.otherRumors;
-
-  // Keep all the important stuff
-  let messages = [].concat.apply([], Object.values(rumors).map(a => Object.values(a))).map(b => b.rumor).map(x => {return {from:x.originator, rumor:x.text}});
-
-  let text = '';
-
-  text += '<h3>Gossip</h3>';
-  text += '<ul>';
-  messages.forEach(m => {
-    text += '<li>'+m.from+': '+m.rumor+'</li>';
-  });
-  text += '</ul>'
-  return res.send(text);
-});
-
-app.get('/create-gossip', (req, res) => {
-
-  let text = `
-<h1>Create some gossip</h1>
-
-<form action="/create-gossip" method="post">
-  Gossip: <input type="text" name="gossip"><br>
-  <input type="submit" value="Submit">
-</form>
-
-<a href="/users">Back to users</a>
-`;
-
-  let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
-  let rumors = curGossipUser.user.otherRumors;
-
-  // Keep all the important stuff
-  let messages = [].concat.apply([], Object.values(rumors).map(a => Object.values(a))).map(b => b.rumor).map(x => {return {from:x.originator, rumor:x.text}});
-
-  text += '<h3>Gossip</h3>';
-  text += '<ul>';
-  messages.forEach(m => {
-    text += '<li>'+m.from+': '+m.rumor+'</li>';
-  });
-  text += '</ul>';
-
-  res.send(text);
+app.post('/remote-user', (req, res) => {
+  console.log('POST remote user');
+  console.dir(req.body);
+  addKnownUser(req.body.fendpoint);
+  return res.redirect('./users');
 });
 
 // Create rumor for logged in user
@@ -203,12 +222,17 @@ app.post('/create-gossip', (req, res) => {
 
 // Send rumor direct to user
 app.post('/send-gossip/:id', (req, res) => {
-  
+  // console.log('gossip received!');
+  // return res.end();
+  // console.log(req.params.id);
   let targetUser = getUser(req.params.id);
-  let rumor = req.body.rumor;
-  targetUser.receiveRumor(rumor);
 
-  res.send('gossip received..');
+  if (targetUser === undefined) {
+    return res.send({success: false, error: 'incorrect id'});
+  }
+
+  targetUser.receiveMessage(req.body);
+  return res.send('gossip rumor/want received..');
 });
 
 // View user profile
@@ -284,12 +308,23 @@ app.get('/users', (req, res) => {
 
   let text = '';
 
-  if (req.cookies.user !== undefined) {
+  console.log(333);
+  console.dir(users);
+
+  if (req.cookies.user !== undefined && users.length !== 0) {
     text += '<h1>Logged in as: '+req.cookies.user.name+'</h1>';
     text += '<a href="/create-gossip">Create Gossip</a>';
 
     let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
-    let rumors = curGossipUser.user.otherRumors;
+
+    console.dir(users);
+    console.dir(req.cookies.user);
+    console.dir(curGossipUser);
+    let rumors = curGossipUser.user.rumors;
+
+    console.log(111)
+    console.dir(curGossipUser);
+    console.log(rumors);
 
     // Keep all the important stuff
     let messages = [].concat.apply([], Object.values(rumors).map(a => Object.values(a))).map(b => b.rumor).map(x => {return {from:x.originator, rumor:x.text}});
@@ -318,12 +353,18 @@ app.get('/users', (req, res) => {
   text += `
 <h1>Users</h1>
 <table style="border-collapse: collapse">
-  <tr><th>Name</th><th>Last Login</th><th>Login</th><th>Profile</th><th>Last Checkin</th></tr>
+  <tr><th>Name</th><th>Last Login</th><th>Login</th><th>Profile</th><th>Endpoint</th></tr>
 `;
 
   // Add users list
   db.users.forEach(user => {
-    text += '<tr><td>' + user.name + '</td><td>' + user.lastLogin + '</td><td><a href="/user/' + user.id + '">Login</a></td><td><a href="/view/' + user.id + '">Profile</a></td>';
+
+    console.log(777);
+    console.dir(user);
+    console.dir(users);
+
+    let notDBUser = getUser(user.userObjId);
+    text += '<tr><td>' + user.name + '</td><td>' + user.lastLogin + '</td><td><a href="/user/' + user.id + '">Login</a></td><td><a href="/view/' + user.id + '">Profile</a></td><td>'+notDBUser.endpoint+'</td>';
     if (user.checkins !== undefined && user.checkins.items !== undefined && user.checkins.items.length > 0) {
       text += '<td>'+user.checkins.items[0].venue.name+', '+user.checkins.items[0].venue.city+ '</td>';
     }
@@ -336,6 +377,16 @@ app.get('/users', (req, res) => {
 <h1>Add User</h1>
 <form action="/user" method="post">
   Name: <input type="text" name="fname"><br>
+  <input type="submit" value="Submit">
+</form>
+`;
+
+  // Add remote user form
+  text += `
+<h1>Add User From Other Server</h1>
+<form action="/remote-user" method="post">
+  Name: <input type="text" name="fname"><br>
+  Endpoint: <input type="text" name="fendpoint"><br>
   <input type="submit" value="Submit">
 </form>
 `;
@@ -467,27 +518,6 @@ app.get('/redirect', (req, res) => {
 });
 
 
-// HTTP
-http.createServer((req, res) => {
-  res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
-  res.end();
-}).listen(8080, () => {
-  console.log('http redirect on 8080..');
-});
-
-// Certificate locations for https
-var sslOptions = {
-  cert: fs.readFileSync('./sslcert/fullchain.pem'),
-  key: fs.readFileSync('./sslcert/privkey.pem')
-};
-
-// HTTPS
-https.createServer(sslOptions, app).listen(8000, () => {
-  console.log('╔══════════════════════════╗');
-  console.log('║ Server Started Port 8000 ║');
-  console.log('╚══════════════════════════╝');
-});
-
 
 
 setInterval(runGossip,timeBetweenUpdates);
@@ -495,9 +525,140 @@ setInterval(runGossip,timeBetweenUpdates);
 
 
 
+// Force SSL
+// app.use(function(req, res, next) {
+//   if(!req.secure) {
+//     return res.redirect(['https://', req.get('Host'), req.url].join(''));
+//   }
+//   next();
+// });
+
+// // HTTP
+// http.createServer((req, res) => {
+//   res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
+//   res.end();
+// }).listen(8080, () => {
+//   console.log('http redirect on 8080..');
+// });
+
+// // Certificate locations for https
+// var sslOptions = {
+//   cert: fs.readFileSync('./sslcert/fullchain.pem'),
+//   key: fs.readFileSync('./sslcert/privkey.pem')
+// };
+
+// // HTTPS
+// https.createServer(sslOptions, app).listen(8000, () => {
+//   console.log('╔══════════════════════════╗');
+//   console.log('║ Server Started Port 8000 ║');
+//   console.log('╚══════════════════════════╝');
+// });
+
+// Try to load HTTPS certs
+let sslOptions;
+try {
+  sslOptions = {
+    cert: fs.readFileSync('./sslcert/fullchain.pem'),
+    key: fs.readFileSync('./sslcert/privkey.pem')
+  };
+} catch (e) {
+  console.log("Error: Cannot load ssl certificates: " + e);
+}
+
+
+if (sslOptions !== undefined) {
+
+  // HTTPS
+  let httpsServer = https.createServer(sslOptions, app).listen(httpsPort, () => {
+    console.log('╔═════════════════════════╗');
+    console.log('║ HTTPS Started Port '+httpsPort+' ║');
+    console.log('╚═════════════════════════╝');
+  });
+
+  // HTTP REDIRECT TO HTTPS
+  http.createServer((req, res) => {
+    res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
+    res.end();
+  }).listen(httpPort, () => {
+    console.log('http redirect on '+httpPort+'..');
+  });
+
+} else {
+  console.log('HTTPS unavailable (no SSL Certs)');
+  // HTTP only
+  let httpServer = http.createServer(app).listen(httpPort, () => {
+    console.log('╔════════════════════════╗');
+    console.log('║ HTTP Started Port '+httpPort+' ║');
+    console.log('╚════════════════════════╝');
+  });
+}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// app.get('/gossip', (req, res) => {
+//   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
+//   let rumors = curGossipUser.user.otherRumors;
+
+//   // Keep all the important stuff
+//   let messages = [].concat.apply([], Object.values(rumors).map(a => Object.values(a))).map(b => b.rumor).map(x => {return {from:x.originator, rumor:x.text}});
+
+//   let text = '';
+
+//   text += '<h3>Gossip</h3>';
+//   text += '<ul>';
+//   messages.forEach(m => {
+//     text += '<li>'+m.from+': '+m.rumor+'</li>';
+//   });
+//   text += '</ul>'
+//   return res.send(text);
+// });
+
+// app.get('/create-gossip', (req, res) => {
+
+//   let text = `
+// <h1>Create some gossip</h1>
+
+// <form action="/create-gossip" method="post">
+//   Gossip: <input type="text" name="gossip"><br>
+//   <input type="submit" value="Submit">
+// </form>
+
+// <a href="/users">Back to users</a>
+// `;
+
+//   let curGossipUser = users.find(user => user.id == req.cookies.user.userObjId);
+//   let rumors = curGossipUser.user.otherRumors;
+
+//   // Keep all the important stuff
+//   let messages = [].concat.apply([], Object.values(rumors).map(a => Object.values(a))).map(b => b.rumor).map(x => {return {from:x.originator, rumor:x.text}});
+
+//   text += '<h3>Gossip</h3>';
+//   text += '<ul>';
+//   messages.forEach(m => {
+//     text += '<li>'+m.from+': '+m.rumor+'</li>';
+//   });
+//   text += '</ul>';
+
+//   res.send(text);
+// });
 
 
 

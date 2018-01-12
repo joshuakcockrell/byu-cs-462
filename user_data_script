@@ -15,7 +15,7 @@ echo ''
 echo '---------------------'
 echo 'Route port 80 to 8000'
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-ports 8080
-sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 8000
+sudo iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 8443
 
 # # List redirects
 # sudo iptables -t nat -L INPUT --line-numbers
@@ -40,7 +40,8 @@ cd byu-cs-462
 echo ''
 echo '---------------------'
 echo 'Download node'
-yum -y install nodejs npm --enablerepo=epel
+curl --silent --location https://rpm.nodesource.com/setup_9.x | sudo bash -
+yum -y install nodejs
 node -v
 
 # NPM install
